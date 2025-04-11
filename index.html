@@ -246,5 +246,19 @@ B. Porzione di fabbricato composto da depositi e servizi al piano i...</div>
   
 <!-- PROPERTIES_CARDS -->
 </div>
+<script>
+    window.addEventListener("load", function () {
+      window.parent.postMessage({
+        height: document.body.scrollHeight
+      }, "*");
+    });
+  
+    window.addEventListener("resize", function () {
+      window.parent.postMessage({
+        height: document.body.scrollHeight
+      }, "*");
+    });
+  </script>
+  
 </body>
 </html>

@@ -1,5 +1,5 @@
 const fs = require('fs');
-const https = require('https');
+const http = require('http');
 const { parseStringPromise } = require('xml2js');
 
 const XML_URL = 'http://partner.miogest.com/agenzie/demo.xml';
@@ -8,7 +8,7 @@ const OUTPUT_PATH = './index.html';
 
 function fetchXML(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, res => {
+    http.get(url, res => {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => resolve(data));
@@ -16,24 +16,22 @@ function fetchXML(url) {
   });
 }
 
-function generateCard(immobile) {
-  const get = tag => immobile[tag]?.[0] || '';
-  const image = immobile.foto?.[0]?.foto_url?.[0] || '';
-  const title = get('titolo');
-  const location = get('localita');
-  const price = get('prezzo');
-  const description = get('descrizione')?.substring(0, 150) + '...';
+function generateCard(annuncio) {
+  const get = (tag) => annuncio[tag]?.[0] || '';
+  const foto = annuncio.Foto?.[0] || '';
+  const descrizione = get('Descrizione');
+  const descrizioneShort = descrizione.length > 150 ? descrizione.substring(0, 150) + '...' : descrizione;
 
   return `
     <div class="property-card">
       <div class="property-image">
-        <img src="\${image}" alt="Immagine proprietà">
+        <img src="${foto}" alt="Immagine proprietà">
       </div>
       <div class="property-details">
-        <div class="property-title">\${title}</div>
-        <div class="property-location">\${location}</div>
-        <div class="property-price">\${price} €</div>
-        <div class="property-description">\${description}</div>
+        <div class="property-title">${get('Titolo')}</div>
+        <div class="property-location">${get('Comune')}</div>
+        <div class="property-price">${get('Prezzo')} €</div>
+        <div class="property-description">${descrizioneShort}</div>
       </div>
     </div>
   `;
@@ -43,15 +41,19 @@ function generateCard(immobile) {
   try {
     const xmlData = await fetchXML(XML_URL);
     const parsed = await parseStringPromise(xmlData);
-    const immobili = parsed.immobili?.immobile || [];
+    const annunci = parsed.Annunci?.Annuncio || [];
 
-    const cards = immobili.map(generateCard).join('\n');
+    if (!annunci.length) {
+      console.log('⚠️ Nessun annuncio trovato nel feed XML.');
+    }
+
+    const cardsHtml = annunci.map(generateCard).join('\n');
     const template = fs.readFileSync(TEMPLATE_PATH, 'utf8');
-    const output = template.replace('<!-- PROPERTIES_CARDS -->', cards);
+    const output = template.replace('<div class="properties-grid">', '<div class="properties-grid">' + cardsHtml);
 
     fs.writeFileSync(OUTPUT_PATH, output, 'utf8');
     console.log('✅ index.html generato con successo!');
   } catch (err) {
-    console.error('Errore:', err);
+    console.error('❌ Errore durante la generazione:', err);
   }
 })();
