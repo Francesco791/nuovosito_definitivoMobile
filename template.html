@@ -10,20 +10,6 @@
       padding: 30px;
       background-color: #f7f7f7;
     }
-    .filters {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-    }
-    .filters select {
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      min-width: 200px;
-      background-color: white;
-      font-size: 14px;
-    }
     .properties-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -70,48 +56,12 @@
       color: #444;
       line-height: 1.4;
     }
-    .view-button {
-      padding: 8px 12px;
-      background-color: #1a73e8;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-      cursor: pointer;
-      margin-top: 10px;
-      text-decoration: none;
-      display: inline-block;
-    }
-    .view-button:hover {
-      background-color: #0c5cc0;
-    }
   </style>
 </head>
 <body>
 <h2>Annunci Immobiliari</h2>
-
-<div class="filters">
-  <select id="location-filter"><option value="">Tutte le località</option></select>
-  <select id="contract-filter"><option value="">Tutti i contratti</option></select>
-  <select id="category-filter"><option value="">Tutte le categorie</option></select>
+<div class="properties-grid">
+<!-- PROPERTIES_CARDS -->
 </div>
-
-<div class="properties-grid" id="properties-container"></div>
-
-<script>
-  let propertiesData = []; // Popolato da build.js
-</script>
-
-<script>
-  // Auto-resize iframe
-  function postHeight() {
-    window.parent.postMessage({
-      height: document.body.scrollHeight
-    }, "*");
-  }
-
-  window.addEventListener("load", postHeight);
-  window.addEventListener("resize", postHeight);
-</script>
 </body>
 </html>
