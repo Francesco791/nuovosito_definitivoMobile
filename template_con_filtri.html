@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Annunci Immobiliari</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 30px;
+      background-color: #f7f7f7;
+    }
+
+    .filters {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .filters select {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      min-width: 200px;
+      background-color: white;
+      font-size: 14px;
+    }
+
+    .properties-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .property-card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .property-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .property-image img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .property-details {
+      padding: 15px;
+    }
+
+    .property-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .property-location {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .property-price {
+      font-size: 16px;
+      font-weight: bold;
+      color: #1a73e8;
+    }
+
+    .property-description {
+      margin: 10px 0;
+      font-size: 14px;
+      color: #444;
+      line-height: 1.4;
+    }
+
+    .view-button {
+      padding: 8px 12px;
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .view-button:hover {
+      background-color: #0c5cc0;
+    }
+  </style>
+</head>
+<body>
+<h2>Annunci Immobiliari</h2>
+
+<div class="filters">
+  <select id="location-filter"><option value="">Tutte le località</option></select>
+  <select id="contract-filter"><option value="">Tutti i contratti</option></select>
+  <select id="category-filter"><option value="">Tutte le categorie</option></select>
+</div>
+
+<div class="properties-grid" id="properties-container">
+<!-- Annunci inseriti da build.js -->
+</div>
+
+<script>
+  let propertiesData = []; // popolata da build.js
+  const filters = {
+    location: '',
+    contract: '',
+    category: ''
+  };
+
+  function populateFilters() {
+    const locs = new Set(), cats = new Set(), contracts = new Set();
+    propertiesData.forEach(p => {
+      if (p.location) locs.add(p.location);
+      if (p.category) cats.add(p.category);
+      if (p.contract) contracts.add(p.contract);
+    });
+
+    fillSelect("location-filter", locs);
+    fillSelect("category-filter", cats);
+    fillSelect("contract-filter", contracts);
+  }
+
+  function fillSelect(id, values) {
+    const select = document.getElementById(id);
+    [...values].sort().forEach(v => {
+      const opt = document.createElement("option");
+      opt.value = v;
+      opt.textContent = v;
+      select.appendChild(opt);
+    });
+
+    select.addEventListener("change", () => {
+      const key = id.split("-")[0];
+      filters[key] = select.value;
+      renderProperties();
+    });
+  }
+
+  function renderProperties() {
+    const container = document.getElementById("properties-container");
+    container.innerHTML = '';
+
+    const filtered = propertiesData.filter(p =>
+      (!filters.location || p.location === filters.location) &&
+      (!filters.contract || p.contract === filters.contract) &&
+      (!filters.category || p.category === filters.category)
+    );
+
+    if (filtered.length === 0) {
+      container.innerHTML = '<p>Nessuna proprietà trovata con i filtri selezionati.</p>';
+      return;
+    }
+
+    filtered.forEach(p => {
+      const card = document.createElement("div");
+      card.className = "property-card";
+      card.innerHTML = `
+        <div class="property-image">
+          <img src="${p.image}" alt="Immagine proprietà" />
+        </div>
+        <div class="property-details">
+          <div class="property-title">${p.title}</div>
+          <div class="property-location">${p.location}</div>
+          <div class="property-price">${p.price} €</div>
+          <div class="property-description">
+            ${p.description?.substring(0, 150)}${p.description?.length > 150 ? '...' : ''}
+          </div>
+          <a class="view-button" href="https://www.luxuryacademy.online/" target="_blank">Vedi dettagli</a>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    postHeight();
+  }
+
+  function postHeight() {
+    if (window.parent && window.parent.postMessage) {
+      window.parent.postMessage({
+        height: document.body.scrollHeight
+      }, "*");
+    }
+  }
+
+  window.addEventListener("load", () => {
+    populateFilters();
+    renderProperties();
+    setInterval(postHeight, 2000);
+  });
+</script>
+</body>
+</html>
