@@ -17,33 +17,23 @@ function fetchXML(url) {
   });
 }
 
-function convertToPropertyData(annuncio) {
+function generateCard(annuncio) {
   const get = (tag) => annuncio[tag]?.[0] || '';
-  return {
-    title: get('Titolo'),
-    location: get('Comune'),
-    category: get('Categoria'),
-    contract: get('Contratto'),
-    price: get('Prezzo'),
-    image: annuncio.Foto?.[0] || '',
-    description: get('Descrizione'),
-    link: DEFAULT_DETAIL_LINK
-  };
-}
+  const foto = annuncio.Foto?.[0] || '';
+  const descrizione = get('Descrizione');
+  const descrizioneShort = descrizione.length > 150 ? descrizione.substring(0, 150) + '...' : descrizione;
 
-function generateCard(p) {
-  const descrizioneShort = p.description.length > 150 ? p.description.substring(0, 150) + '...' : p.description;
   return `
     <div class="property-card">
       <div class="property-image">
-        <img src="${p.image}" alt="Immagine proprietà">
+        <img src="${foto}" alt="Immagine proprietà">
       </div>
       <div class="property-details">
-        <div class="property-title">${p.title}</div>
-        <div class="property-location">${p.location}</div>
-        <div class="property-price">${p.price} €</div>
+        <div class="property-title">${get('Titolo')}</div>
+        <div class="property-location">${get('Comune')}</div>
+        <div class="property-price">${get('Prezzo')} €</div>
         <div class="property-description">${descrizioneShort}</div>
-        <a class="view-button" href="${p.link}" target="_blank">Vedi dettagli</a>
+        <a class="view-button" href="${DEFAULT_DETAIL_LINK}" target="_blank">Vedi dettagli</a>
       </div>
     </div>
   `;
@@ -59,14 +49,9 @@ function generateCard(p) {
       console.log('⚠️ Nessun annuncio trovato nel feed XML.');
     }
 
-    const data = annunci.map(convertToPropertyData);
-    const cardsHtml = data.map(generateCard).join('\n');
-    const propertiesDataScript = `<script>let propertiesData = ${JSON.stringify(data)};</script>`;
-
+    const cardsHtml = annunci.map(generateCard).join('\n');
     const template = fs.readFileSync(TEMPLATE_PATH, 'utf8');
-    const output = template
-      .replace('<!-- PROPERTIES_CARDS -->', cardsHtml)
-      .replace('<!-- PROPERTIES_DATA -->', propertiesDataScript);
+    const output = template.replace('<div class="properties-grid">', '<div class="properties-grid">' + cardsHtml);
 
     fs.writeFileSync(OUTPUT_PATH, output, 'utf8');
     console.log('✅ index.html generato con successo!');
