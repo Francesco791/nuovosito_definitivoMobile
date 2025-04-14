@@ -3,26 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <title>Annunci Immobiliari</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Playfair Display', serif;
       margin: 0;
-      padding: 30px;
-      background-color: #f7f7f7;
+      padding: 40px 20px;
+      background-color: #fefefe;
+      color: #2d2d2d;
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 30px;
+      text-align: center;
     }
 
     .properties-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 35px;
+      max-width: 1300px;
+      margin: 0 auto;
     }
 
     .property-card {
-      background: white;
-      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      background-color: #ffffff;
+      border: 1px solid #e2e2e2;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      transition: transform 0.2s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+      transition: transform 0.3s ease;
     }
 
     .property-card:hover {
@@ -31,60 +45,62 @@
 
     .property-image img {
       width: 100%;
-      height: 200px;
+      height: 250px;
       object-fit: cover;
-      display: block;
+      border-bottom: 1px solid #e2e2e2;
     }
 
     .property-details {
-      padding: 15px;
+      padding: 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     .property-title {
-      font-size: 16px;
-      font-weight: bold;
-      color: #333;
+      font-size: 18px;
+      font-weight: 700;
       margin-bottom: 8px;
     }
 
     .property-location {
-      font-size: 14px;
-      color: #666;
+      font-size: 15px;
+      color: #777;
       margin-bottom: 8px;
     }
 
     .property-price {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: bold;
-      color: #1a73e8;
+      color: #005f56;
+      margin-bottom: 14px;
     }
 
     .property-description {
-      margin: 10px 0;
-      font-size: 14px;
+      font-size: 15px;
       color: #444;
-      line-height: 1.4;
+      margin-bottom: 16px;
+      flex-grow: 1;
     }
 
     .view-button {
-      padding: 8px 12px;
-      background-color: #1a73e8;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-      cursor: pointer;
-      margin-top: 10px;
+      align-self: start;
+      padding: 10px 20px;
+      background-color: #005f56;
+      color: #fff;
       text-decoration: none;
-      display: inline-block;
+      font-size: 15px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
     }
 
     .view-button:hover {
-      background-color: #0c5cc0;
+      background-color: #003f3a;
     }
   </style>
 </head>
 <body>
+
 <h2>Annunci Immobiliari</h2>
 
 <div class="properties-grid">
@@ -295,16 +311,14 @@ B. Porzione di fabbricato composto da depositi e servizi al piano i...</div>
     }, "*");
   }
 
-  // invia l'altezza in più momenti
   window.addEventListener("load", postHeight);
   window.addEventListener("resize", postHeight);
   window.addEventListener("click", postHeight);
   window.addEventListener("scroll", () => {
-    setTimeout(postHeight, 100); // debounce per evitare spam
+    setTimeout(postHeight, 100);
   });
-  setInterval(postHeight, 2500); // fallback ulteriore
+  setInterval(postHeight, 2500);
 </script>
-
 
 </body>
 </html>
