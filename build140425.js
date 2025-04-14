@@ -5,6 +5,7 @@ const { parseStringPromise } = require('xml2js');
 const XML_URL = 'http://partner.miogest.com/agenzie/demo.xml';
 const TEMPLATE_PATH = './template.html';
 const OUTPUT_PATH = './index.html';
+const DEFAULT_DETAIL_LINK = 'https://www.luxuryacademy.online/';
 
 function fetchXML(url) {
   return new Promise((resolve, reject) => {
@@ -32,6 +33,7 @@ function generateCard(annuncio) {
         <div class="property-location">${get('Comune')}</div>
         <div class="property-price">${get('Prezzo')} €</div>
         <div class="property-description">${descrizioneShort}</div>
+        <a class="view-button" href="${DEFAULT_DETAIL_LINK}" target="_blank">Vedi dettagli</a>
       </div>
     </div>
   `;
