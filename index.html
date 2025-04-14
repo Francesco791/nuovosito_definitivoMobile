@@ -11,6 +11,22 @@
       background-color: #f7f7f7;
     }
 
+    .filters {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .filters select {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      min-width: 200px;
+      background-color: white;
+      font-size: 14px;
+    }
+
     .properties-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -87,224 +103,104 @@
 <body>
 <h2>Annunci Immobiliari</h2>
 
-<div class="properties-grid">
-    <div class="property-card">
-      <div class="property-image">
-        <img src="https://img.miogest.com/2/0/imm_3332-20240108142245--1024.jpeg" alt="Immagine proprietà">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Appartamento in Vendita a Albese con Cassano (CO) </div>
-        <div class="property-location">Albese con Cassano</div>
-        <div class="property-price">456000 €</div>
-        <div class="property-description">L'appartamento in vendita nel comune di Albese con Cassano è situato in Via Piave, in una zona tranquilla e residenziale. Si tratta di un immobile spa...</div>
-        <a class="view-button" href="https://www.luxuryacademy.online/" target="_blank">Vedi dettagli</a>
-      </div>
-    </div>
-  
+<div class="filters">
+  <select id="location-filter"><option value="">Tutte le località</option></select>
+  <select id="contract-filter"><option value="">Tutti i contratti</option></select>
+  <select id="category-filter"><option value="">Tutte le categorie</option></select>
+</div>
 
-    <div class="property-card">
-      <div class="property-image">
-        <img src="https://img.miogest.com/2/0/imm_3464-20240108125944--1024.jpeg" alt="Immagine proprietà">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Appartamento in Vendita a Albese con Cassano (CO) </div>
-        <div class="property-location">Albese con Cassano</div>
-        <div class="property-price">460000 €</div>
-        <div class="property-description">L'appartamento in vendita nel comune di Albese con Cassano è situato in Via Piave, in una zona tranquilla e residenziale. Si tratta di un immobile spa...</div>
-        <a class="view-button" href="https://www.luxuryacademy.online/" target="_blank">Vedi dettagli</a>
-      </div>
-    </div>
-  
-
-    <div class="property-card">
-      <div class="property-image">
-        <img src="https://img.miogest.com/2/0/imm_3479-20240108130008--1024.jpeg" alt="Immagine proprietà">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Appartamento in Vendita a Tavernerio (CO) </div>
-        <div class="property-location">Albese con Cassano</div>
-        <div class="property-price">375000 €</div>
-        <div class="property-description">L'appartamento in vendita si trova in Via S. Fereolo ed è un ampio e luminoso quadrilocali situato al piano terra di un edificio residenziale. Con una...</div>
-        <a class="view-button" href="https://www.luxuryacademy.online/" target="_blank">Vedi dettagli</a>
-      </div>
-    </div>
-  
-
-    <div class="property-card">
-      <div class="property-image">
-        <img src="https://img.miogest.com/2/0/imm_3491-20240108125947-1280-.jpeg" alt="Immagine proprietà">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Appartamento in Vendita a Albese con Cassano (CO) </div>
-        <div class="property-location">Albese con Cassano</div>
-        <div class="property-price">436000 €</div>
-        <div class="property-description">L'appartamento in vendita nel comune di Albese con Cassano è situato in Via Piave, in una zona tranquilla e residenziale.</div>
-        <a class="view-button" href="https://www.luxuryacademy.online/" target="_blank">Vedi dettagli</a>
-      </div>
-    </div>
-  
-
-    <div class="property-card">
-      <div class="property-image">
-        <img src="https://img.miogest.com/2/0/imm_3495-20240108142239--1024.jpeg" alt="Immagine proprietà">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Appartamento in Vendita a Albese con Cassano (CO) </div>
-        <div class="property-location">Albese con Cassano</div>
-        <div class="property-price">476000 €</div>
-        <div class="property-description">L'appartamento in vendita nel comune di Albese con Cassano è situato in Via Piave, in una zona tranquilla e residenziale. Si tratta di un immobile spa...</div>
-        <a class="view-button" href="https://www.luxuryacademy.online/" target="_blank">Vedi dettagli</a>
-      </div>
-    </div>
-  
-
-    <div class="property-card">
-      <div class="property-image">
-        <img src="https://img.miogest.com/2/0/imm_3508-20240108142323--1024.jpeg" alt="Immagine proprietà">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Appartamento in Vendita a Tavernerio (CO) </div>
-        <div class="property-location">Albese con Cassano</div>
-        <div class="property-price">328000 €</div>
-        <div class="property-description">L'appartamento in vendita si trova in Via S. Fereolo ed è un ampio e luminoso quadrilocali situato al piano terra di un edificio residenziale. Con una...</div>
-        <a class="view-button" href="https://www.luxuryacademy.online/" target="_blank">Vedi dettagli</a>
-      </div>
-    </div>
-  
-
-    <div class="property-card">
-      <div class="property-image">
-        <img src="https://img.miogest.com/2/0/imm_3516-20240108142401--1024.jpeg" alt="Immagine proprietà">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Appartamento in Vendita a Albese con Cassano (CO) </div>
-        <div class="property-location">Albese con Cassano</div>
-        <div class="property-price">453000 €</div>
-        <div class="property-description">L'appartamento in vendita nel comune di Albese con Cassano è situato in Via Piave, in una zona tranquilla e residenziale. Si tratta di un immobile spa...</div>
-        <a class="view-button" href="https://www.luxuryacademy.online/" target="_blank">Vedi dettagli</a>
-      </div>
-    </div>
-  
-
-    <div class="property-card">
-      <div class="property-image">
-        <img src="https://img.miogest.com/2/0/imm_3525-20240108142438--1024.jpeg" alt="Immagine proprietà">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Appartamento in Vendita a Tavernerio (CO) </div>
-        <div class="property-location">Albese con Cassano</div>
-        <div class="property-price">381000 €</div>
-        <div class="property-description">L'appartamento in vendita si trova in Via S. Fereolo ed è un ampio e luminoso quadrilocali situato al piano terra di un edificio residenziale. Con una...</div>
-        <a class="view-button" href="https://www.luxuryacademy.online/" target="_blank">Vedi dettagli</a>
-      </div>
-    </div>
-  
-
-    <div class="property-card">
-      <div class="property-image">
-        <img src="https://img.miogest.com/2/0/imm_3540-20240108142514--1024.jpeg" alt="Immagine proprietà">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Appartamento in Vendita a Albese con Cassano (CO) </div>
-        <div class="property-location">Albese con Cassano</div>
-        <div class="property-price">368000 €</div>
-        <div class="property-description">L'appartamento in vendita nel comune di Albese con Cassano è situato in Via Piave, in una zona tranquilla e residenziale. Si tratta di un immobile spa...</div>
-        <a class="view-button" href="https://www.luxuryacademy.online/" target="_blank">Vedi dettagli</a>
-      </div>
-    </div>
-  
-
-    <div class="property-card">
-      <div class="property-image">
-        <img src="https://img.miogest.com/2/0/imm_3543-20240110151638--1024.jpeg" alt="Immagine proprietà">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Appartamento in Vendita a Albese con Cassano (CO) </div>
-        <div class="property-location">Albese con Cassano</div>
-        <div class="property-price">200 €</div>
-        <div class="property-description">L'appartamento in vendita nel comune di Albese con Cassano è situato in Via Piave, in una zona tranquilla e residenziale. Si tratta di un immobile spa...</div>
-        <a class="view-button" href="https://www.luxuryacademy.online/" target="_blank">Vedi dettagli</a>
-      </div>
-    </div>
-  
-
-    <div class="property-card">
-      <div class="property-image">
-        <img src="" alt="Immagine proprietà">
-      </div>
-      <div class="property-details">
-        <div class="property-title"></div>
-        <div class="property-location">Erba</div>
-        <div class="property-price">223000 €</div>
-        <div class="property-description"></div>
-        <a class="view-button" href="https://www.luxuryacademy.online/" target="_blank">Vedi dettagli</a>
-      </div>
-    </div>
-  
-
-    <div class="property-card">
-      <div class="property-image">
-        <img src="https://img.miogest.com/2/0/imm_4276-20241213105419-1138-.jpg" alt="Immagine proprietà">
-      </div>
-      <div class="property-details">
-        <div class="property-title"></div>
-        <div class="property-location">Brenna</div>
-        <div class="property-price">424000 €</div>
-        <div class="property-description">Complesso immobiliare formato da:
-A. Porzione di fabbricato composto da deposito
-B. Porzione di fabbricato composto da depositi e servizi al piano i...</div>
-        <a class="view-button" href="https://www.luxuryacademy.online/" target="_blank">Vedi dettagli</a>
-      </div>
-    </div>
-  
-
-    <div class="property-card">
-      <div class="property-image">
-        <img src="" alt="Immagine proprietà">
-      </div>
-      <div class="property-details">
-        <div class="property-title"></div>
-        <div class="property-location">Erba</div>
-        <div class="property-price">152000 €</div>
-        <div class="property-description">Cessione attività pizzeria/ristorante a Erba, in posizione strategica e di forte passaggio. Locale ben avviato con clientela consolidata, attrezzature...</div>
-        <a class="view-button" href="https://www.luxuryacademy.online/" target="_blank">Vedi dettagli</a>
-      </div>
-    </div>
-  
-
-    <div class="property-card">
-      <div class="property-image">
-        <img src="https://img.miogest.com/2/0/imm_4238-20250219142041--1024.jpeg" alt="Immagine proprietà">
-      </div>
-      <div class="property-details">
-        <div class="property-title">TITOLO</div>
-        <div class="property-location">Albese con Cassano</div>
-        <div class="property-price">180000 €</div>
-        <div class="property-description">L'appartamento in asta situato in Via Piave è un'opportunità unica per chi desidera acquistare una proprietà spaziosa ed elegante a un prezzo convenie...</div>
-        <a class="view-button" href="https://www.luxuryacademy.online/" target="_blank">Vedi dettagli</a>
-      </div>
-    </div>
-  
-<!-- PROPERTIES_CARDS -->
+<div class="properties-grid" id="properties-container">
+<!-- Annunci inseriti da build.js -->
 </div>
 
 <script>
-  function postHeight() {
-    window.parent.postMessage({
-      height: document.body.scrollHeight
-    }, "*");
+  let propertiesData = []; // popolata da build.js
+  const filters = {
+    location: '',
+    contract: '',
+    category: ''
+  };
+
+  function populateFilters() {
+    const locs = new Set(), cats = new Set(), contracts = new Set();
+    propertiesData.forEach(p => {
+      if (p.location) locs.add(p.location);
+      if (p.category) cats.add(p.category);
+      if (p.contract) contracts.add(p.contract);
+    });
+
+    fillSelect("location-filter", locs);
+    fillSelect("category-filter", cats);
+    fillSelect("contract-filter", contracts);
   }
 
-  // invia l'altezza in più momenti
-  window.addEventListener("load", postHeight);
-  window.addEventListener("resize", postHeight);
-  window.addEventListener("click", postHeight);
-  window.addEventListener("scroll", () => {
-    setTimeout(postHeight, 100); // debounce per evitare spam
+  function fillSelect(id, values) {
+    const select = document.getElementById(id);
+    [...values].sort().forEach(v => {
+      const opt = document.createElement("option");
+      opt.value = v;
+      opt.textContent = v;
+      select.appendChild(opt);
+    });
+
+    select.addEventListener("change", () => {
+      const key = id.split("-")[0];
+      filters[key] = select.value;
+      renderProperties();
+    });
+  }
+
+  function renderProperties() {
+    const container = document.getElementById("properties-container");
+    container.innerHTML = '';
+
+    const filtered = propertiesData.filter(p =>
+      (!filters.location || p.location === filters.location) &&
+      (!filters.contract || p.contract === filters.contract) &&
+      (!filters.category || p.category === filters.category)
+    );
+
+    if (filtered.length === 0) {
+      container.innerHTML = '<p>Nessuna proprietà trovata con i filtri selezionati.</p>';
+      return;
+    }
+
+    filtered.forEach(p => {
+      const card = document.createElement("div");
+      card.className = "property-card";
+      card.innerHTML = `
+        <div class="property-image">
+          <img src="${p.image}" alt="Immagine proprietà" />
+        </div>
+        <div class="property-details">
+          <div class="property-title">${p.title}</div>
+          <div class="property-location">${p.location}</div>
+          <div class="property-price">${p.price} €</div>
+          <div class="property-description">
+            ${p.description?.substring(0, 150)}${p.description?.length > 150 ? '...' : ''}
+          </div>
+          <a class="view-button" href="https://www.luxuryacademy.online/" target="_blank">Vedi dettagli</a>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    postHeight();
+  }
+
+  function postHeight() {
+    if (window.parent && window.parent.postMessage) {
+      window.parent.postMessage({
+        height: document.body.scrollHeight
+      }, "*");
+    }
+  }
+
+  window.addEventListener("load", () => {
+    populateFilters();
+    renderProperties();
+    setInterval(postHeight, 2000);
   });
-  setInterval(postHeight, 2500); // fallback ulteriore
 </script>
-
-
 </body>
 </html>

@@ -51,7 +51,7 @@ function generateCard(annuncio) {
 
     const cardsHtml = annunci.map(generateCard).join('\n');
     const template = fs.readFileSync(TEMPLATE_PATH, 'utf8');
-    const output = template.replace('<div class="properties-grid">', '<div class="properties-grid">' + cardsHtml);
+    const output = template.replace('<!-- PROPERTIES_CARDS -->', cardsHtml);
 
     fs.writeFileSync(OUTPUT_PATH, output, 'utf8');
     console.log('✅ index.html generato con successo!');
