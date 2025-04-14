@@ -2,13 +2,17 @@ name: Aggiornamento Annunci
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # Ogni notte alle 02:00 UTC
-  workflow_dispatch:     # Esecuzione manuale
+    - cron: '0 3 * * *'  # ogni notte alle 3
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
+      
       - name: Checkout del codice
         uses: actions/checkout@v3
 
