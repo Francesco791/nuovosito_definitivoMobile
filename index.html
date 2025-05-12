@@ -334,5 +334,42 @@ B. Porzione di fabbricato composto da depositi e servizi al piano i...</div>
   setInterval(postHeight, 2500);
 </script>
 
+<script>
+  // Riceve i filtri dal sito Squarespace
+  window.addEventListener('message', function(event) {
+    const { tipo, categoria, localita } = event.data || {};
+    console.log('🎯 Filtri ricevuti:', tipo, categoria, localita);
+
+    filtraAnnunci(tipo, categoria, localita);
+  });
+
+  // Funzione che applica i filtri
+  function filtraAnnunci(tipo, categoria, localita) {
+    const annunci = document.querySelectorAll('.property-card');
+
+    annunci.forEach(annuncio => {
+      const tipoAnnuncio = annuncio.dataset.tipo?.toLowerCase() || '';
+      const categoriaAnnuncio = annuncio.dataset.categoria?.toLowerCase() || '';
+      const localitaAnnuncio = annuncio.dataset.localita?.toLowerCase() || '';
+
+      const tipoMatch = !tipo || tipo.toLowerCase() === tipoAnnuncio;
+      const categoriaMatch = !categoria || categoria.toLowerCase() === categoriaAnnuncio;
+      const localitaMatch = !localita || localita.toLowerCase() === localitaAnnuncio;
+
+      if (tipoMatch && categoriaMatch && localitaMatch) {
+        annuncio.style.display = 'flex';
+      } else {
+        annuncio.style.display = 'none';
+      }
+    });
+
+    // Aggiorna l'altezza dell'iframe (importante!)
+    setTimeout(() => {
+      window.parent.postMessage({ height: document.body.scrollHeight }, '*');
+    }, 100);
+  }
+</script>
+
+
 </body>
 </html>
