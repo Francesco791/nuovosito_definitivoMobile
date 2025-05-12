@@ -369,6 +369,30 @@ B. Porzione di fabbricato composto da depositi e servizi al piano i...</div>
     }, 100);
   }
 </script>
+<script>
+  // Aggiunge dinamicamente data-tipo, data-categoria, data-localita
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll('.property-card').forEach(card => {
+      const titolo = card.querySelector('.property-title')?.innerText.toLowerCase() || '';
+      const localita = card.querySelector('.property-location')?.innerText.toLowerCase() || '';
+
+      // Determina "tipo" (acquistare o affittare) in base al contenuto del titolo
+      const tipo = titolo.includes("vendita") ? "acquistare"
+                  : titolo.includes("affitto") || titolo.includes("affittare") ? "affittare"
+                  : "";
+
+      // Determina "categoria" (semplificata per ora)
+      const categoria = titolo.includes("terreno") ? "terreno"
+                      : titolo.includes("villa") ? "villa"
+                      : "appartamento"; // valore di default
+
+      // Imposta gli attributi data-*
+      card.dataset.tipo = tipo;
+      card.dataset.categoria = categoria;
+      card.dataset.localita = localita;
+    });
+  });
+</script>
 
 
 </body>
