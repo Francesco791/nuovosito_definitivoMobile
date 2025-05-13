@@ -394,6 +394,44 @@ B. Porzione di fabbricato composto da depositi e servizi al piano i...</div>
   });
 </script>
 
+<script>
+  // Invia al parent (Squarespace) il numero di annunci visibili
+  function inviaConteggioAnnunci() {
+    const visibili = [...document.querySelectorAll('.property-card')]
+                      .filter(el => el.style.display !== 'none')
+                      .length;
+
+    window.parent.postMessage({
+      annunciTrovati: visibili
+    }, '*');
+  }
+
+  // Estendi filtraAnnunci per includere il conteggio
+  function filtraAnnunci(tipo, categoria, localita) {
+    const annunci = document.querySelectorAll('.property-card');
+
+    annunci.forEach(annuncio => {
+      const tipoAnnuncio = annuncio.dataset.tipo || '';
+      const categoriaAnnuncio = annuncio.dataset.categoria || '';
+      const localitaAnnuncio = annuncio.dataset.localita || '';
+
+      const tipoMatch = !tipo || tipo === tipoAnnuncio;
+      const categoriaMatch = !categoria || categoria === categoriaAnnuncio;
+      const localitaMatch = !localita || localita === localitaAnnuncio;
+
+      annuncio.style.display = (tipoMatch && categoriaMatch && localitaMatch) ? 'flex' : 'none';
+    });
+
+    // Aggiorna l'altezza dell'iframe
+    setTimeout(() => {
+      window.parent.postMessage({ height: document.body.scrollHeight }, '*');
+    }, 100);
+
+    // Invia il numero di annunci visibili al parent
+    inviaConteggioAnnunci();
+  }
+</script>
+
 
 </body>
 </html>
