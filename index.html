@@ -432,6 +432,22 @@ B. Porzione di fabbricato composto da depositi e servizi al piano i...</div>
   }
 </script>
 
+<script>
+  // Quando viene richiesta la lista delle località
+  window.addEventListener("message", function (event) {
+    if (event.data?.richiestaLocalita) {
+      const localitaSet = new Set();
+      document.querySelectorAll('.property-card').forEach(card => {
+        const loc = card.querySelector('.property-location')?.innerText.toLowerCase().trim();
+        if (loc) localitaSet.add(loc);
+      });
+
+      const localitaUniche = [...localitaSet].sort();
+      window.parent.postMessage({ localitaDisponibili: localitaUniche }, '*');
+    }
+  });
+</script>
+
 
 </body>
 </html>
