@@ -269,7 +269,30 @@ La vil...</div>
       filtraAnnunci(data);
     }
   });
+
+  function filtraAnnunci({ tipo, categoria, localita }) {
+  document.querySelectorAll('.property-card').forEach(card => {
+    const descrizione = card.querySelector('.property-description')?.textContent.toLowerCase() || '';
+    const location = card.querySelector('.property-location')?.textContent.toLowerCase() || '';
+    const contratto = card.dataset.contratto?.toLowerCase() || '';
+
+    let visibile = true;
+
+    if (tipo && contratto !== tipo.toLowerCase()) visibile = false;
+    if (categoria && !descrizione.includes(categoria.toLowerCase())) visibile = false;
+    if (localita && localita !== '' && !location.includes(localita.toLowerCase())) visibile = false;
+
+    card.style.display = visibile ? 'block' : 'none';
+  });
+
+  const visibili = document.querySelectorAll('.property-card:not([style*="display: none"])').length;
+  event?.source?.postMessage?.({ annunciTrovati: visibili }, "*");
+}
+
 </script>
+
+
+
 
 </body>
 </html>
