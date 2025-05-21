@@ -19,22 +19,24 @@ function fetchXML(url) {
 }
 
 function generateCard(annuncio) {
-  const get = (tag) => annuncio[tag]?.[0] || '';
+  const get = (tag) => annuncio[tag]?.[0]?.trim() || '';
   const foto = annuncio.Foto?.[0] || '';
   const titolo = get('Titolo');
   const comune = get('Comune');
   const prezzo = get('Prezzo');
   const descrizione = get('Descrizione');
-  const contratto = get('TipoContratto')?.toLowerCase();
+  const contratto = get('Contratto').toLowerCase(); // es. "affitto" o "vendita"
+
+  const descrizioneShort = descrizione.length > 150 ? descrizione.substring(0, 150) + '...' : descrizione;
 
   if (!foto || !titolo || !comune || !prezzo || !descrizione || !contratto) return '';
 
-  const descrizioneShort = descrizione.length > 150
-    ? descrizione.substring(0, 150) + '...'
-    : descrizione;
+  // IMPORTANTE: Usiamo le stesse chiavi esatte come nel filtro Squarespace
+  const tipoFiltro = contratto === 'vendita' ? 'acquistare' : 
+                     contratto === 'affitto' ? 'affittare' : '';
 
   return `
-    <div class="property-card" data-contratto="${contratto}">
+    <div class="property-card" data-contratto="${tipoFiltro}">
       <div class="property-image">
         <img src="${foto}" alt="Immagine proprietà">
       </div>
