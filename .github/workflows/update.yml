@@ -2,35 +2,41 @@ name: Aggiornamento Annunci
 
 on:
   schedule:
-    - cron: '0 3 * * *'  # ogni notte alle 3
-  workflow_dispatch:
+    - cron: '0 4 * * *'  # Ogni giorno alle 04:00 UTC (~6:00 CEST)
+  workflow_dispatch:      # Avvio manuale da GitHub
 
 permissions:
-  contents: write
+  contents: write         # Permette il push su GitHub
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      
-      - name: Checkout del codice
+      - name: 🧾 Checkout del codice
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
+      - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: Installa dipendenze
+      - name: 📦 Installa le dipendenze
         run: npm install
 
-      - name: Genera index.html
+      - name: 🏗️ Genera index.html dal feed XML
         run: node build140425.js
 
-      - name: Commit e push
+      - name: 🔁 Commit e push solo se index.html è cambiato
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add index.html
-          git commit -m "Aggiornamento notturno automatico"
-          git push
+          
+          if git diff --cached --quiet; then
+            echo "🟢 Nessuna modifica da pushare."
+          else
+            git commit -m "🔄 Aggiornamento automatico index.html"
+            git push
+            echo "✅ Push completato con successo!"
+          fi
