@@ -1,18 +1,13 @@
 const fs = require('fs');
 const http = require('http');
+const { execSync } = require('child_process');
 const { parseStringPromise } = require('xml2js');
 
-// URL del file XML da Miogest
 const xmlUrl = "http://partner.miogest.com/agenzie/vella.xml";
-
-// Percorsi dei file locali
 const TEMPLATE_PATH = './template.html';
 const OUTPUT_PATH = './index.html';
-
-// Link di default per il bottone "Vedi dettagli"
 const DEFAULT_DETAIL_LINK = 'https://www.luxuryacademy.online/';
 
-// Funzione per scaricare il file XML
 function fetchXML(url) {
   return new Promise((resolve, reject) => {
     http.get(url, res => {
@@ -23,7 +18,6 @@ function fetchXML(url) {
   });
 }
 
-// Funzione per generare una card HTML a partire da un annuncio
 function generateCard(annuncio) {
   const get = (tag) => annuncio[tag]?.[0] || '';
   const foto = annuncio.Foto?.[0] || '';
@@ -31,13 +25,16 @@ function generateCard(annuncio) {
   const comune = get('Comune');
   const prezzo = get('Prezzo');
   const descrizione = get('Descrizione');
-  const descrizioneShort = descrizione.length > 150 ? descrizione.substring(0, 150) + '...' : descrizione;
+  const contratto = get('TipoContratto')?.toLowerCase();
 
-  // Salta gli annunci incompleti
-  if (!foto || !titolo || !comune || !prezzo || !descrizione) return '';
+  if (!foto || !titolo || !comune || !prezzo || !descrizione || !contratto) return '';
+
+  const descrizioneShort = descrizione.length > 150
+    ? descrizione.substring(0, 150) + '...'
+    : descrizione;
 
   return `
-    <div class="property-card">
+    <div class="property-card" data-contratto="${contratto}">
       <div class="property-image">
         <img src="${foto}" alt="Immagine proprietà">
       </div>
@@ -52,7 +49,6 @@ function generateCard(annuncio) {
   `;
 }
 
-// Funzione principale
 (async () => {
   try {
     console.log("📥 Scarico il feed XML...");
@@ -71,14 +67,30 @@ function generateCard(annuncio) {
 
     console.log("🧩 Carico il template...");
     const template = fs.readFileSync(TEMPLATE_PATH, 'utf8');
-
-    // Inserisce le card nel punto definito dal placeholder
     const output = template.replace('<!-- PROPERTIES_CARDS -->', cardsHtml);
 
     fs.writeFileSync(OUTPUT_PATH, output, 'utf8');
     console.log('✅ index.html generato con successo!');
+
+    // 🔄 Commit & push automatico su GitHub
+    console.log("🔁 Controllo modifiche...");
+    execSync('git config user.name "github-actions[bot]"');
+    execSync('git config user.email "github-actions[bot]@users.noreply.github.com"');
+    execSync('git add index.html');
+
+    try {
+      execSync('git diff --cached --quiet');
+      console.log("🟢 Nessuna modifica da committare.");
+    } catch {
+      console.log("📝 Committo le modifiche...");
+      execSync('git commit -m "🔄 Aggiornamento automatico index.html"');
+      console.log("🚀 Eseguo push...");
+      execSync('git push');
+      console.log("✅ Push completato con successo!");
+    }
+
   } catch (err) {
     console.error('❌ Errore durante la generazione:', err);
-    process.exit(1); // Segnala fallimento in ambienti CI come GitHub Actions
+    process.exit(1);
   }
 })();
