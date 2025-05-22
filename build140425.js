@@ -6,7 +6,6 @@ const { parseStringPromise } = require('xml2js');
 const xmlUrl = "http://partner.miogest.com/agenzie/vella.xml";
 const TEMPLATE_PATH = './template.html';
 const OUTPUT_PATH = './index.html';
-const DEFAULT_DETAIL_LINK = 'https://www.luxuryacademy.online/';
 
 function fetchXML(url) {
   return new Promise((resolve, reject) => {
@@ -20,14 +19,16 @@ function fetchXML(url) {
 
 function generateCard(annuncio) {
   const get = (tag) => annuncio[tag]?.[0] || '';
-  const foto = annuncio.Foto?.[0] || '';
+  const foto = get('Foto');
   const titolo = get('Titolo');
   const comune = get('Comune');
   const prezzo = get('Prezzo');
   const descrizione = get('Descrizione');
   const contratto = get('TipoContratto')?.toLowerCase();
+  const linkAnnuncio = get('Url');
 
-  if (!foto || !titolo || !comune || !prezzo || !descrizione || !contratto) return '';
+  // Scarta l'annuncio se manca uno dei campi essenziali
+  if (!foto || !titolo || !comune || !prezzo || !descrizione || !contratto || !linkAnnuncio) return '';
 
   const descrizioneShort = descrizione.length > 150
     ? descrizione.substring(0, 150) + '...'
@@ -43,7 +44,7 @@ function generateCard(annuncio) {
         <div class="property-location">${comune}</div>
         <div class="property-price">${prezzo} €</div>
         <div class="property-description">${descrizioneShort}</div>
-        <a class="view-button" href="${DEFAULT_DETAIL_LINK}" target="_blank">Vedi dettagli</a>
+        <a class="view-button" href="${linkAnnuncio}" target="_blank">Vedi dettagli</a>
       </div>
     </div>
   `;
