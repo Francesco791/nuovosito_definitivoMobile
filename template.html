@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -105,7 +104,7 @@
 <h2>Annunci Immobiliari</h2>
 
 <div class="properties-grid">
-<!-- PROPERTIES_CARDS -->
+  <!-- PROPERTIES_CARDS -->
 </div>
 
 <script>
@@ -169,55 +168,6 @@
     setTimeout(postHeight, 100);
   });
   setInterval(postHeight, 2500);
-</script>
-
-
-<script>
-  // Estrae località uniche
-  function estraiLocalita() {
-    const comuni = Array.from(document.querySelectorAll('.property-location'))
-      .map(el => el.textContent.trim())
-      .filter((v, i, a) => v && a.indexOf(v) === i);
-    return comuni;
-  }
-
-  // Applica i filtri
-  function filtraAnnunci({ tipo, categoria, localita }) {
-    document.querySelectorAll('.property-card').forEach(card => {
-      const descrizione = card.querySelector('.property-description')?.textContent.toLowerCase();
-      const location = card.querySelector('.property-location')?.textContent.toLowerCase();
-
-      let visible = true;
-
-      if (localita && !location.includes(localita.toLowerCase())) visible = false;
-      if (categoria && !descrizione.includes(categoria.toLowerCase())) visible = false;
-      if (tipo && !descrizione.includes(tipo.toLowerCase())) visible = false;
-
-      card.style.display = visible ? 'block' : 'none';
-    });
-
-    const totali = document.querySelectorAll('.property-card:not([style*="display: none"])').length;
-    event?.source?.postMessage?.({ annunciTrovati: totali }, '*');
-  }
-
-  // Risponde ai messaggi dall'esterno (filtro)
-  window.addEventListener('message', function(event) {
-    const data = event.data;
-
-    if (data.richiestaLocalita) {
-      const localita = estraiLocalita();
-      const totale = document.querySelectorAll('.property-card').length;
-
-      event.source.postMessage({
-        localitaDisponibili: localita,
-        annunciTrovati: totale
-      }, event.origin || '*');
-    }
-
-    if (data.tipo || data.categoria || data.localita) {
-      filtraAnnunci(data);
-    }
-  });
 </script>
 
 </body>
