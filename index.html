@@ -11,6 +11,9 @@
       padding: 20px 0;
       background-color: #fefefe;
       color: #2d2d2d;
+      overflow-y: visible;
+      overflow-x: hidden;
+      min-height: auto;
     }
 
     h2 {
@@ -24,12 +27,46 @@
 
     .properties-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
       gap: 30px;
       width: 100%;
       margin: 0;
       padding: 0 20px;
       box-sizing: border-box;
+    }
+
+    /* Quando c'è una sola card, occupare tutta la larghezza ma con limiti ragionevoli */
+    .properties-grid:has(.property-card:only-child) .property-card,
+    .properties-grid .property-card:only-child {
+      grid-column: 1 / -1;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Fallback per browser che non supportano :has() */
+    @supports not (selector(:has(*))) {
+      .properties-grid.single-card {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+      
+      .properties-grid.single-card .property-card {
+        max-width: 800px;
+        width: 100%;
+      }
+      
+      .properties-grid.few-cards {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+    }
+
+    /* Per 2-3 card, layout ottimizzato */
+    .properties-grid:has(.property-card:nth-child(2):not(:nth-child(4))) {
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
     .property-card {
@@ -659,8 +696,13 @@ Nur wenige Minut...</div>
     // Mostra messaggio se nessun risultato
     showNoResultsMessage(visibili);
     
-    // Ridimensiona iframe
-    setTimeout(postHeight, 300);
+    // Aggiorna layout per singola card
+    updateGridLayout();
+    
+    // Ridimensiona iframe con delay per aspettare il render
+    setTimeout(postHeight, 100);
+    setTimeout(postHeight, 500);
+    setTimeout(postHeight, 1000);
   }
 
   function showNoResultsMessage(count) {
@@ -676,10 +718,16 @@ Nur wenige Minut...</div>
           <div style="color: #777;">Prova a modificare i filtri di ricerca</div>
         `;
         document.querySelector('.properties-grid').appendChild(message);
+        
+        // Ridimensiona dopo aver aggiunto il messaggio
+        setTimeout(postHeight, 100);
       }
     } else {
       if (existingMessage) {
         existingMessage.remove();
+        
+        // Ridimensiona dopo aver rimosso il messaggio
+        setTimeout(postHeight, 100);
       }
     }
   }
@@ -712,14 +760,23 @@ Nur wenige Minut...</div>
   // Funzioni per ridimensionamento iframe
   function postHeight() {
     if (window.parent !== window) {
+      // Calcola l'altezza effettiva del contenuto
+      const body = document.body;
+      const html = document.documentElement;
+      
       const height = Math.max(
-        document.body.scrollHeight,
-        document.documentElement.scrollHeight,
-        600
+        body.scrollHeight,
+        body.offsetHeight,
+        html.clientHeight,
+        html.scrollHeight,
+        html.offsetHeight
       );
+      
       window.parent.postMessage({
         height: height
       }, "*");
+      
+      console.log(`📤 Altezza inviata: ${height}px`);
     }
   }
 
@@ -739,11 +796,16 @@ Nur wenige Minut...</div>
     childList: true,
     subtree: true,
     attributes: true,
-    attributeFilter: ['style']
+    attributeFilter: ['style', 'class']
   });
 
-  // Ridimensionamento periodico
-  setInterval(postHeight, 3000);
+  // Ridimensionamento quando cambia la finestra
+  window.addEventListener("resize", () => {
+    setTimeout(postHeight, 100);
+  });
+
+  // Ridimensionamento periodico (meno frequente)
+  setInterval(postHeight, 5000);
 
   // Inizializzazione
   document.addEventListener('DOMContentLoaded', function() {
