@@ -8,7 +8,7 @@
     body {
       font-family: 'Nunito', sans-serif;
       margin: 0;
-      padding: 40px 20px;
+      padding: 20px 0;
       background-color: #fefefe;
       color: #2d2d2d;
     }
@@ -24,10 +24,12 @@
 
     .properties-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 35px;
-      max-width: 1300px;
-      margin: 0 auto;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 30px;
+      width: 100%;
+      margin: 0;
+      padding: 0 20px;
+      box-sizing: border-box;
     }
 
     .property-card {
@@ -95,22 +97,44 @@
       line-height: 1.5;
     }
 
-    .view-button {
-      align-self: start;
-      padding: 12px 24px;
-      background-color: #6E5C4F;
-      color: #fff;
+    .property-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: auto;
+    }
+
+    .view-button, .contact-button {
+      flex: 1;
+      padding: 12px 16px;
       text-decoration: none;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       border-radius: 8px;
       transition: all 0.3s ease;
       border: none;
       cursor: pointer;
+      text-align: center;
+    }
+
+    .view-button {
+      background-color: #6E5C4F;
+      color: #fff;
     }
 
     .view-button:hover {
       background-color: #594b40;
+      transform: translateY(-2px);
+    }
+
+    .contact-button {
+      background-color: transparent;
+      color: #6E5C4F;
+      border: 2px solid #6E5C4F;
+    }
+
+    .contact-button:hover {
+      background-color: #6E5C4F;
+      color: white;
       transform: translateY(-2px);
     }
 
@@ -130,13 +154,49 @@
     }
 
     @media (max-width: 768px) {
+      body {
+        padding: 15px 0;
+      }
+      
       .properties-grid {
         grid-template-columns: 1fr;
         gap: 20px;
+        padding: 0 15px;
       }
       
       .property-card {
-        margin: 0 10px;
+        margin: 0;
+      }
+      
+      .property-buttons {
+        flex-direction: column;
+        gap: 8px;
+      }
+      
+      .view-button, .contact-button {
+        flex: none;
+      }
+    }
+
+    /* Stili specifici per desktop - larghezza completa */
+    @media (min-width: 769px) {
+      .properties-grid {
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        gap: 25px;
+        padding: 0 15px;
+      }
+      
+      .property-card {
+        min-height: 500px;
+      }
+    }
+
+    /* Per schermi molto larghi */
+    @media (min-width: 1400px) {
+      .properties-grid {
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        gap: 30px;
+        padding: 0 20px;
       }
     }
   </style>
@@ -444,7 +504,7 @@ Nur wenige Minut...</div>
     return R * c;
   }
 
-  // Geocoding semplificato per principali città svizzere
+  // Geocoding semplificato per principali città svizzere e ticinesi
   const CITY_COORDINATES = {
     'lugano': { lat: 46.0037, lon: 8.9511 },
     'bellinzona': { lat: 46.1901, lon: 9.0172 },
@@ -453,6 +513,11 @@ Nur wenige Minut...</div>
     'chiasso': { lat: 45.8303, lon: 9.0319 },
     'comano': { lat: 46.0412, lon: 8.9511 },
     'bosco luganese': { lat: 46.0232, lon: 8.9071 },
+    'torricella': { lat: 46.0275, lon: 8.9456 },
+    'caslano': { lat: 45.9729, lon: 8.8853 },
+    'canobbio': { lat: 46.0239, lon: 8.9428 },
+    'massagno': { lat: 46.0134, lon: 8.9344 },
+    'paradiso': { lat: 45.9961, lon: 8.9511 },
     'zurigo': { lat: 47.3769, lon: 8.5417 },
     'basilea': { lat: 47.5596, lon: 7.5886 },
     'berna': { lat: 46.9481, lon: 7.4474 },
@@ -487,17 +552,31 @@ Nur wenige Minut...</div>
         visibile = false;
       }
 
-      // Filtro per località con distanza
+      // Filtro per località con distanza - logica migliorata
       if (filtri.localita) {
-        const searchLocation = filtri.localita.toLowerCase();
-        const comune = (card.dataset.comune || '').toLowerCase();
-        const regione = (card.dataset.regione || '').toLowerCase();
-        const provincia = (card.dataset.provincia || '').toLowerCase();
+        const searchLocation = filtri.localita.toLowerCase().trim();
+        const comune = (card.dataset.comune || '').toLowerCase().trim();
+        const regione = (card.dataset.regione || '').toLowerCase().trim();
+        const provincia = (card.dataset.provincia || '').toLowerCase().trim();
         
-        let locationMatch = 
-          comune.includes(searchLocation) ||
-          regione.includes(searchLocation) ||
-          provincia.includes(searchLocation);
+        let locationMatch = false;
+        
+        // Match esatto del comune
+        if (comune === searchLocation) {
+          locationMatch = true;
+        }
+        // Match esatto della regione  
+        else if (regione === searchLocation) {
+          locationMatch = true;
+        }
+        // Match che inizia con la ricerca (per casi come "Lugano" che trova "Lugano Centro")
+        else if (comune.startsWith(searchLocation) || regione.startsWith(searchLocation)) {
+          locationMatch = true;
+        }
+        // Match della provincia solo se la ricerca è abbastanza specifica (>= 4 caratteri)
+        else if (searchLocation.length >= 4 && provincia.includes(searchLocation)) {
+          locationMatch = true;
+        }
 
         // Se è specificata una distanza, calcola la distanza geografica
         if (!locationMatch && filtri.distance && filtri.distance > 0) {
@@ -516,8 +595,21 @@ Nur wenige Minut...</div>
         if (!locationMatch) visibile = false;
       }
 
-      // Filtro per tipologia
-      if (filtri.tipo) {
+      // Filtro per tipologia usando codici categoria
+      if (filtri.categoryCodes) {
+        const codiciRichiesti = filtri.categoryCodes.split(',').filter(c => c.trim());
+        const codiciCard = (card.dataset.categoriaCodici || '').split(',');
+        
+        if (codiciRichiesti.length > 0) {
+          const hasMatch = codiciRichiesti.some(codice => 
+            codiciCard.includes(codice.trim())
+          );
+          if (!hasMatch) visibile = false;
+        }
+      }
+
+      // Filtro per tipologia legacy (fallback)
+      if (filtri.tipo && !filtri.categoryCodes) {
         const tipi = filtri.tipo.split(',').filter(t => t.trim());
         const categoria = card.dataset.categoria || '';
         if (tipi.length > 0 && !tipi.some(tipo => categoria.includes(tipo.trim()))) {
