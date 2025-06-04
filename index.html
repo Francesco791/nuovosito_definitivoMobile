@@ -11,9 +11,6 @@
       padding: 20px 0;
       background-color: #fefefe;
       color: #2d2d2d;
-      overflow-y: visible;
-      overflow-x: hidden;
-      min-height: auto;
     }
 
     h2 {
@@ -27,46 +24,12 @@
 
     .properties-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
       gap: 30px;
       width: 100%;
       margin: 0;
       padding: 0 20px;
       box-sizing: border-box;
-    }
-
-    /* Quando c'è una sola card, occupare tutta la larghezza ma con limiti ragionevoli */
-    .properties-grid:has(.property-card:only-child) .property-card,
-    .properties-grid .property-card:only-child {
-      grid-column: 1 / -1;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    /* Fallback per browser che non supportano :has() */
-    @supports not (selector(:has(*))) {
-      .properties-grid.single-card {
-        grid-template-columns: 1fr;
-        justify-items: center;
-      }
-      
-      .properties-grid.single-card .property-card {
-        max-width: 800px;
-        width: 100%;
-      }
-      
-      .properties-grid.few-cards {
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-    }
-
-    /* Per 2-3 card, layout ottimizzato */
-    .properties-grid:has(.property-card:nth-child(2):not(:nth-child(4))) {
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      max-width: 1200px;
-      margin: 0 auto;
     }
 
     .property-card {
@@ -246,14 +209,14 @@
   
     <div class="property-card" 
          data-contratto="vendita"
-         data-categoria="28"
-         data-categoria-codici=""
-         data-caratteristiche=""
+         data-categoria="casa"
+         data-categoria-codici="28,48"
+         data-caratteristiche="vista,giardino,terrazzo,box"
          data-comune="bosco luganese"
          data-regione="ticino"
          data-provincia="tidistretto di lugano"
          data-prezzo="1340000"
-         data-mq="0"
+         data-mq="165"
          data-vani="3,5"
          data-camere="2"
          data-bagni="2">
@@ -263,11 +226,11 @@
       <div class="property-details">
         <div class="property-title">Moderna casa unifamiliare con portico</div>
         <div class="property-location">Bosco Luganese, Ticino</div>
-        <div class="property-price">CHF 1340000</div>
-        <div class="property-specs"> 3,5 vani • 2 camere • 2 bagni</div>
+        <div class="property-price">CHF 1’340’000</div>
+        <div class="property-specs">165 m² • 3,5 vani • 2 camere • 2 bagni</div>
         <div class="property-description">Splendida villa unifamiliare con vista panoramica sulle montagne, situata in una zona tranquilla e ben servita.
 
-Questa proprietà, completamente ris...</div>
+Questa proprietà, completamente ristrutturata nel 2011, rappresen...</div>
         <div class="property-buttons">
           <a class="view-button" href="#" onclick="alert('Link non disponibile')">
             Vedi Dettagli
@@ -282,28 +245,28 @@ Questa proprietà, completamente ris...</div>
 
     <div class="property-card" 
          data-contratto="vendita"
-         data-categoria="28"
-         data-categoria-codici=""
-         data-caratteristiche=""
+         data-categoria="casa"
+         data-categoria-codici="28,26"
+         data-caratteristiche="vista,giardino,terrazzo,box"
          data-comune="torricella"
          data-regione="ticino"
          data-provincia="tidistretto di lugano"
          data-prezzo="1790000"
-         data-mq="0"
+         data-mq="260"
          data-vani="5,5"
          data-camere="4"
          data-bagni="4">
       <div class="property-image">
-        <img src="https://img.miogest.com/26948/0/imm_261-20250305131204-1280-.jpeg" alt="Bella villa nel verde " onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
+        <img src="https://img.miogest.com/26948/0/imm_261-20250305131204-1280-.jpeg" alt="Bella villa nel verde" onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
       </div>
       <div class="property-details">
-        <div class="property-title">Bella villa nel verde </div>
+        <div class="property-title">Bella villa nel verde</div>
         <div class="property-location">Torricella, Ticino</div>
-        <div class="property-price">CHF 1790000</div>
-        <div class="property-specs"> 5,5 vani • 4 camere • 4 bagni</div>
+        <div class="property-price">CHF 1’790’000</div>
+        <div class="property-specs">260 m² • 5,5 vani • 4 camere • 4 bagni</div>
         <div class="property-description">Bellissima villa nel verde adatta ad una famiglia numerosa grazie ai suoi spazi generosi e alla posizione collinare tranquilla e soleggiata.
 
-La vil...</div>
+La villa si sviluppa su 3 livelli: l...</div>
         <div class="property-buttons">
           <a class="view-button" href="#" onclick="alert('Link non disponibile')">
             Vedi Dettagli
@@ -318,26 +281,26 @@ La vil...</div>
 
     <div class="property-card" 
          data-contratto="vendita"
-         data-categoria="32"
-         data-categoria-codici=""
-         data-caratteristiche=""
+         data-categoria="appartamento"
+         data-categoria-codici="32,18"
+         data-caratteristiche="vista,terrazzo,box"
          data-comune="lugano"
          data-regione="ticino"
          data-provincia="tidistretto di lugano"
          data-prezzo="550000"
-         data-mq="0"
+         data-mq="80"
          data-vani="2,5"
          data-camere="0"
          data-bagni="2">
       <div class="property-image">
-        <img src="https://img.miogest.com/26948/0/imm_271-20250318133455-1280-.jpg" alt="Attico luminoso con vista aperta  " onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
+        <img src="https://img.miogest.com/26948/0/imm_271-20250318133455-1280-.jpg" alt="Attico luminoso con vista aperta" onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
       </div>
       <div class="property-details">
-        <div class="property-title">Attico luminoso con vista aperta  </div>
+        <div class="property-title">Attico luminoso con vista aperta</div>
         <div class="property-location">Lugano, Ticino</div>
-        <div class="property-price">CHF 550000</div>
-        <div class="property-specs"> 2,5 vani • 0 camere • 2 bagni</div>
-        <div class="property-description">In una tranquilla e pianeggiante zona residenziale di Lugano, a pochi passi dal lago e dal vivace centro città, ben collegata con i mezzi pubblici, pr...</div>
+        <div class="property-price">CHF 550’000</div>
+        <div class="property-specs">80 m² • 2,5 vani • 0 camere • 2 bagni</div>
+        <div class="property-description">In una tranquilla e pianeggiante zona residenziale di Lugano, a pochi passi dal lago e dal vivace centro città, ben collegata con i mezzi pubblici, proponiamo un attico con una sup...</div>
         <div class="property-buttons">
           <a class="view-button" href="#" onclick="alert('Link non disponibile')">
             Vedi Dettagli
@@ -352,14 +315,14 @@ La vil...</div>
 
     <div class="property-card" 
          data-contratto="vendita"
-         data-categoria="28"
-         data-categoria-codici=""
-         data-caratteristiche=""
+         data-categoria="casa"
+         data-categoria-codici="28,26,48,82,33"
+         data-caratteristiche="vista,giardino,box"
          data-comune="riva san vitale"
          data-regione="ticino"
          data-provincia="tidistretto di mendrisio"
          data-prezzo="2500000"
-         data-mq="0"
+         data-mq="500"
          data-vani="7,5"
          data-camere="4"
          data-bagni="4">
@@ -369,9 +332,9 @@ La vil...</div>
       <div class="property-details">
         <div class="property-title">Un’oasi di charme con vista mozzafiato</div>
         <div class="property-location">Riva San Vitale, Ticino</div>
-        <div class="property-price">CHF 2500000</div>
-        <div class="property-specs"> 7,5 vani • 4 camere • 4 bagni</div>
-        <div class="property-description">In posizione dominante, con una vista spettacolare su Riva San Vitale, il lago e le montagne circostanti, questa affascinante proprietà rappresenta un...</div>
+        <div class="property-price">CHF 2’500’000</div>
+        <div class="property-specs">500 m² • 7,5 vani • 4 camere • 4 bagni</div>
+        <div class="property-description">In posizione dominante, con una vista spettacolare su Riva San Vitale, il lago e le montagne circostanti, questa affascinante proprietà rappresenta un'opportunità unica per chi cer...</div>
         <div class="property-buttons">
           <a class="view-button" href="#" onclick="alert('Link non disponibile')">
             Vedi Dettagli
@@ -386,14 +349,14 @@ La vil...</div>
 
     <div class="property-card" 
          data-contratto="vendita"
-         data-categoria="28"
-         data-categoria-codici=""
-         data-caratteristiche=""
+         data-categoria="casa"
+         data-categoria-codici="28,119,48"
+         data-caratteristiche="vista,giardino,terrazzo,box"
          data-comune="canobbio"
          data-regione="ticino"
          data-provincia="tidistretto di lugano"
          data-prezzo="2890000"
-         data-mq="0"
+         data-mq="171"
          data-vani="4,5"
          data-camere="3"
          data-bagni="2">
@@ -403,9 +366,9 @@ La vil...</div>
       <div class="property-details">
         <div class="property-title">Eleganza e Vista Panoramica: Due ville uniche</div>
         <div class="property-location">Canobbio, Ticino</div>
-        <div class="property-price">CHF 2890000</div>
-        <div class="property-specs"> 4,5 vani • 3 camere • 2 bagni</div>
-        <div class="property-description">Nel comune di Canobbio, in una posizione residenziale privilegiata, nasceranno due ville dal design moderno e raffinato, progettate per valorizzare la...</div>
+        <div class="property-price">CHF 2’890’000</div>
+        <div class="property-specs">171 m² • 4,5 vani • 3 camere • 2 bagni</div>
+        <div class="property-description">Nel comune di Canobbio, in una posizione residenziale privilegiata, nasceranno due ville dal design moderno e raffinato, progettate per valorizzare la splendida vista sul golfo di ...</div>
         <div class="property-buttons">
           <a class="view-button" href="#" onclick="alert('Link non disponibile')">
             Vedi Dettagli
@@ -420,26 +383,28 @@ La vil...</div>
 
     <div class="property-card" 
          data-contratto="vendita"
-         data-categoria="1"
-         data-categoria-codici=""
-         data-caratteristiche=""
+         data-categoria="commerciale"
+         data-categoria-codici="1,18"
+         data-caratteristiche="giardino,box"
          data-comune="caslano"
          data-regione="ticino"
          data-provincia="tidistretto di lugano"
          data-prezzo="350000"
-         data-mq="0"
+         data-mq="63"
          data-vani="2,5"
          data-camere="1"
          data-bagni="1">
       <div class="property-image">
-        <img src="https://img.miogest.com/26948/0/imm_281-20250415153416-1280-.jpeg" alt="Ihre perfekte Ferienoase " onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
+        <img src="https://img.miogest.com/26948/0/imm_281-20250415153416-1280-.jpeg" alt="Ihre perfekte Ferienoase" onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
       </div>
       <div class="property-details">
-        <div class="property-title">Ihre perfekte Ferienoase </div>
+        <div class="property-title">Ihre perfekte Ferienoase</div>
         <div class="property-location">Caslano, Ticino</div>
-        <div class="property-price">CHF 350000</div>
-        <div class="property-specs"> 2,5 vani • 1 camere • 1 bagni</div>
-        <div class="property-description">Suchen Sie eine Ferienwohnung mit 2.5 Zimmern, die Komfort, Entspannung und eine erstklassige Lage vereint? Dann ist diese Immobilie genau das Richtig...</div>
+        <div class="property-price">CHF 350’000</div>
+        <div class="property-specs">63 m² • 2,5 vani • 1 camere • 1 bagni</div>
+        <div class="property-description">Suchen Sie eine Ferienwohnung mit 2.5 Zimmern, die Komfort, Entspannung und eine erstklassige Lage vereint? Dann ist diese Immobilie genau das Richtige für Sie!
+
+Nur wenige Minut...</div>
         <div class="property-buttons">
           <a class="view-button" href="#" onclick="alert('Link non disponibile')">
             Vedi Dettagli
@@ -454,14 +419,14 @@ La vil...</div>
 
     <div class="property-card" 
          data-contratto="vendita"
-         data-categoria="32"
-         data-categoria-codici=""
-         data-caratteristiche=""
+         data-categoria="appartamento"
+         data-categoria-codici="32,26,93"
+         data-caratteristiche="vista,giardino,terrazzo,box"
          data-comune="pregassona"
          data-regione="ticino"
          data-provincia="tidistretto di lugano"
          data-prezzo="1794000"
-         data-mq="0"
+         data-mq="209"
          data-vani="4,5"
          data-camere="3"
          data-bagni="3">
@@ -471,9 +436,9 @@ La vil...</div>
       <div class="property-details">
         <div class="property-title">Elegante attico con Vista Lago</div>
         <div class="property-location">Pregassona, Ticino</div>
-        <div class="property-price">CHF 1794000</div>
-        <div class="property-specs"> 4,5 vani • 3 camere • 3 bagni</div>
-        <div class="property-description">In posizione collinare sopra Lugano, proponiamo in vendita un elegante attico con vista panoramica mozzafiato sulla città e sul lago. Situato in una m...</div>
+        <div class="property-price">CHF 1’794’000</div>
+        <div class="property-specs">209 m² • 4,5 vani • 3 camere • 3 bagni</div>
+        <div class="property-description">In posizione collinare sopra Lugano, proponiamo in vendita un elegante attico con vista panoramica mozzafiato sulla città e sul lago. Situato in una moderna residenza, l’immobile s...</div>
         <div class="property-buttons">
           <a class="view-button" href="#" onclick="alert('Link non disponibile')">
             Vedi Dettagli
@@ -488,14 +453,14 @@ La vil...</div>
 
     <div class="property-card" 
          data-contratto="vendita"
-         data-categoria="1"
-         data-categoria-codici=""
-         data-caratteristiche=""
+         data-categoria="commerciale"
+         data-categoria-codici="1,18,93"
+         data-caratteristiche="vista,giardino,box"
          data-comune="pregassona"
          data-regione="ticino"
          data-provincia="tidistretto di lugano"
          data-prezzo="632500"
-         data-mq="0"
+         data-mq="73"
          data-vani="2,5"
          data-camere="1"
          data-bagni="1">
@@ -505,45 +470,9 @@ La vil...</div>
       <div class="property-details">
         <div class="property-title">Eleganza Contemporanea con Giardino</div>
         <div class="property-location">Pregassona, Ticino</div>
-        <div class="property-price">CHF 632500</div>
-        <div class="property-specs"> 2,5 vani • 1 camere • 1 bagni</div>
-        <div class="property-description">In posizione collinare sopra Lugano, proponiamo in vendita uno splendido appartamento di 2,5 locali con giardino privato. Situato in una moderna resid...</div>
-        <div class="property-buttons">
-          <a class="view-button" href="#" onclick="alert('Link non disponibile')">
-            Vedi Dettagli
-          </a>
-          <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
-            Contattaci
-          </a>
-        </div>
-      </div>
-    </div>
-  
-
-    <div class="property-card" 
-         data-contratto="vendita"
-         data-categoria="37"
-         data-categoria-codici=""
-         data-caratteristiche=""
-         data-comune="lugano"
-         data-regione="ticino"
-         data-provincia="tidistretto di lugano"
-         data-prezzo="1000"
-         data-mq="0"
-         data-vani="1"
-         data-camere="0"
-         data-bagni="0">
-      <div class="property-image">
-        <img src="https://img.miogest.com/26948/0/imm_334-20250603153223-1280-.jpg" alt="Elegante ufficio in villa storica " onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Elegante ufficio in villa storica </div>
-        <div class="property-location">Lugano, Ticino</div>
-        <div class="property-price">CHF 1000</div>
-        <div class="property-specs"> 1 vani • 0 camere • 0 bagni</div>
-        <div class="property-description">A pochi passi dal centro e dal lago di Lugano, offriamo in locazione un elegante ufficio di un locale situato al piano terra di una villa storica.
-
-...</div>
+        <div class="property-price">CHF 632’500</div>
+        <div class="property-specs">73 m² • 2,5 vani • 1 camere • 1 bagni</div>
+        <div class="property-description">In posizione collinare sopra Lugano, proponiamo in vendita uno splendido appartamento di 2,5 locali con giardino privato. Situato in una moderna residenza dotata di ogni comfort, l...</div>
         <div class="property-buttons">
           <a class="view-button" href="#" onclick="alert('Link non disponibile')">
             Vedi Dettagli
@@ -730,13 +659,8 @@ La vil...</div>
     // Mostra messaggio se nessun risultato
     showNoResultsMessage(visibili);
     
-    // Aggiorna layout per singola card
-    updateGridLayout();
-    
-    // Ridimensiona iframe con delay per aspettare il render
-    setTimeout(postHeight, 100);
-    setTimeout(postHeight, 500);
-    setTimeout(postHeight, 1000);
+    // Ridimensiona iframe
+    setTimeout(postHeight, 300);
   }
 
   function showNoResultsMessage(count) {
@@ -752,16 +676,10 @@ La vil...</div>
           <div style="color: #777;">Prova a modificare i filtri di ricerca</div>
         `;
         document.querySelector('.properties-grid').appendChild(message);
-        
-        // Ridimensiona dopo aver aggiunto il messaggio
-        setTimeout(postHeight, 100);
       }
     } else {
       if (existingMessage) {
         existingMessage.remove();
-        
-        // Ridimensiona dopo aver rimosso il messaggio
-        setTimeout(postHeight, 100);
       }
     }
   }
@@ -794,23 +712,14 @@ La vil...</div>
   // Funzioni per ridimensionamento iframe
   function postHeight() {
     if (window.parent !== window) {
-      // Calcola l'altezza effettiva del contenuto
-      const body = document.body;
-      const html = document.documentElement;
-      
       const height = Math.max(
-        body.scrollHeight,
-        body.offsetHeight,
-        html.clientHeight,
-        html.scrollHeight,
-        html.offsetHeight
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        600
       );
-      
       window.parent.postMessage({
         height: height
       }, "*");
-      
-      console.log(`📤 Altezza inviata: ${height}px`);
     }
   }
 
@@ -830,16 +739,11 @@ La vil...</div>
     childList: true,
     subtree: true,
     attributes: true,
-    attributeFilter: ['style', 'class']
+    attributeFilter: ['style']
   });
 
-  // Ridimensionamento quando cambia la finestra
-  window.addEventListener("resize", () => {
-    setTimeout(postHeight, 100);
-  });
-
-  // Ridimensionamento periodico (meno frequente)
-  setInterval(postHeight, 5000);
+  // Ridimensionamento periodico
+  setInterval(postHeight, 3000);
 
   // Inizializzazione
   document.addEventListener('DOMContentLoaded', function() {
