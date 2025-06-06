@@ -638,239 +638,265 @@ La vil...</div>
 </div>
 
 <script>
-  // NUOVA FUNZIONE: Calcola località vicine in base al raggio
-  function getLocalitaVicine(località, raggio) {
-    const mappingDistanze = {
-      'lugano': {
-        5: ['pregassona', 'canobbio', 'bosco luganese'],
-        10: ['pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano'],
-        20: ['pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale'],
-        50: ['pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale', 'mendrisio', 'chiasso', 'locarno', 'bellinzona']
-      },
-      'caslano': {
-        5: ['lugano'],
-        10: ['lugano', 'pregassona', 'canobbio'],
-        20: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'torricella'],
-        50: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'torricella', 'riva san vitale']
-      },
-      'pregassona': {
-        5: ['lugano', 'canobbio'],
-        10: ['lugano', 'canobbio', 'bosco luganese'],
-        20: ['lugano', 'canobbio', 'bosco luganese', 'torricella', 'caslano'],
-        50: ['lugano', 'canobbio', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale']
-      },
-      'canobbio': {
-        5: ['lugano', 'pregassona'],
-        10: ['lugano', 'pregassona', 'bosco luganese'],
-        20: ['lugano', 'pregassona', 'bosco luganese', 'torricella', 'caslano'],
-        50: ['lugano', 'pregassona', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale']
-      },
-      'bosco luganese': {
-        5: ['lugano'],
-        10: ['lugano', 'pregassona', 'canobbio'],
-        20: ['lugano', 'pregassona', 'canobbio', 'torricella', 'caslano'],
-        50: ['lugano', 'pregassona', 'canobbio', 'torricella', 'caslano', 'riva san vitale']
-      },
-      'torricella': {
-        5: [],
-        10: ['lugano', 'pregassona'],
-        20: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'caslano'],
-        50: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'caslano', 'riva san vitale']
-      },
-      'riva san vitale': {
-        5: [],
-        10: ['mendrisio'],
-        20: ['mendrisio', 'lugano'],
-        50: ['mendrisio', 'lugano', 'pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano']
+// NUOVA FUNZIONE: Calcola località vicine in base al raggio
+function getLocalitaVicine(località, raggio) {
+  const mappingDistanze = {
+    'lugano': {
+      5: ['pregassona', 'canobbio', 'bosco luganese'],
+      10: ['pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano'],
+      20: ['pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale'],
+      50: ['pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale', 'mendrisio', 'chiasso', 'locarno', 'bellinzona']
+    },
+    'caslano': {
+      5: ['lugano'],
+      10: ['lugano', 'pregassona', 'canobbio'],
+      20: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'torricella'],
+      50: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'torricella', 'riva san vitale']
+    },
+    'pregassona': {
+      5: ['lugano', 'canobbio'],
+      10: ['lugano', 'canobbio', 'bosco luganese'],
+      20: ['lugano', 'canobbio', 'bosco luganese', 'torricella', 'caslano'],
+      50: ['lugano', 'canobbio', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale']
+    },
+    'canobbio': {
+      5: ['lugano', 'pregassona'],
+      10: ['lugano', 'pregassona', 'bosco luganese'],
+      20: ['lugano', 'pregassona', 'bosco luganese', 'torricella', 'caslano'],
+      50: ['lugano', 'pregassona', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale']
+    },
+    'bosco luganese': {
+      5: ['lugano'],
+      10: ['lugano', 'pregassona', 'canobbio'],
+      20: ['lugano', 'pregassona', 'canobbio', 'torricella', 'caslano'],
+      50: ['lugano', 'pregassona', 'canobbio', 'torricella', 'caslano', 'riva san vitale']
+    },
+    'torricella': {
+      5: [],
+      10: ['lugano', 'pregassona'],
+      20: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'caslano'],
+      50: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'caslano', 'riva san vitale']
+    },
+    'riva san vitale': {
+      5: [],
+      10: ['mendrisio'],
+      20: ['mendrisio', 'lugano'],
+      50: ['mendrisio', 'lugano', 'pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano']
+    }
+  };
+
+  const localitàNorm = località.toLowerCase().trim();
+  
+  // Trova il raggio più vicino disponibile
+  const raggiDisponibili = [5, 10, 20, 50];
+  const raggioEffettivo = raggiDisponibili.find(r => r >= raggio) || 50;
+  
+  if (mappingDistanze[localitàNorm] && mappingDistanze[localitàNorm][raggioEffettivo]) {
+    console.log(`🗺️ ${località} raggio ${raggio}km → trovate: ${mappingDistanze[localitàNorm][raggioEffettivo].join(', ')}`);
+    return mappingDistanze[localitàNorm][raggioEffettivo];
+  }
+  
+  console.log(`🗺️ ${località} raggio ${raggio}km → nessuna località mappata`);
+  return [];
+}
+
+function estraiLocalita() {
+  const locationSet = new Set();
+  document.querySelectorAll('.property-card').forEach(card => {
+    const comune = card.dataset.comune;
+    const regione = card.dataset.regione;
+    if (comune) locationSet.add(comune.charAt(0).toUpperCase() + comune.slice(1));
+    if (regione && regione !== comune) locationSet.add(regione.charAt(0).toUpperCase() + regione.slice(1));
+  });
+  return Array.from(locationSet).sort();
+}
+
+function filtraAnnunci(filtri) {
+  let visibili = 0;
+  console.log('🔍 Filtri applicati:', filtri);
+  
+  // DEBUG SPECIFICO per località
+  if (filtri.localita && filtri.localita.trim()) {
+    console.log(`🗺️ === RICERCA LOCALITÀ: "${filtri.localita}" (raggio: ${filtri.distance || 0}km) ===`);
+  }
+  
+  document.querySelectorAll('.property-card').forEach((card, index) => {
+    let visibile = true;
+
+    // Filtro per tipo contratto
+    if (filtri.contract && filtri.contract !== card.dataset.contratto) {
+      visibile = false;
+    }
+
+    // Filtro per località con raggio - LOGICA MIGLIORATA + DEBUG
+    if (filtri.localita) {
+      const searchLocation = filtri.localita.toLowerCase().trim();
+      const comune = (card.dataset.comune || '').toLowerCase().trim();
+      const regione = (card.dataset.regione || '').toLowerCase().trim();
+      const provincia = (card.dataset.provincia || '').toLowerCase().trim();
+      const titolo = card.querySelector('.property-title')?.textContent || '';
+      
+      let locationMatch = false;
+      let matchType = '';
+      
+      // MATCH ESATTO - priorità massima
+      if (comune === searchLocation || regione === searchLocation) {
+        locationMatch = true;
+        matchType = 'esatto';
       }
-    };
-
-    const localitàNorm = località.toLowerCase().trim();
-    
-    // Trova il raggio più vicino disponibile
-    const raggiDisponibili = [5, 10, 20, 50];
-    const raggioEffettivo = raggiDisponibili.find(r => r >= raggio) || 50;
-    
-    if (mappingDistanze[localitàNorm] && mappingDistanze[localitàNorm][raggioEffettivo]) {
-      console.log(`🗺️ ${località} raggio ${raggio}km → trovate: ${mappingDistanze[localitàNorm][raggioEffettivo].join(', ')}`);
-      return mappingDistanze[localitàNorm][raggioEffettivo];
+      // MATCH STARTSWITH - seconda priorità (solo per nomi lunghi)
+      else if (searchLocation.length >= 5 && (comune.startsWith(searchLocation) || regione.startsWith(searchLocation))) {
+        locationMatch = true;
+        matchType = 'prefisso';
+      }
+      
+      // RAGGIO DI RICERCA - implementazione con mapping località
+      if (!locationMatch && filtri.distance && filtri.distance > 0) {
+        const vicinanze = getLocalitaVicine(searchLocation, filtri.distance);
+        if (vicinanze.includes(comune) || vicinanze.includes(regione)) {
+          locationMatch = true;
+          matchType = `raggio ${filtri.distance}km`;
+        }
+      }
+      
+      // DEBUG per ogni card testata
+      console.log(`🏠 "${titolo.substring(0, 30)}..." → ${comune} | Match: ${locationMatch ? '✅ ' + matchType : '❌'}`);
+      
+      if (!locationMatch) visibile = false;
     }
-    
-    console.log(`🗺️ ${località} raggio ${raggio}km → nessuna località mappata`);
-    return [];
-  }
 
-  function estraiLocalita() {
-    const locationSet = new Set();
-    document.querySelectorAll('.property-card').forEach(card => {
-      const comune = card.dataset.comune;
-      const regione = card.dataset.regione;
-      if (comune) locationSet.add(comune.charAt(0).toUpperCase() + comune.slice(1));
-      if (regione && regione !== comune) locationSet.add(regione.charAt(0).toUpperCase() + regione.slice(1));
-    });
-    return Array.from(locationSet).sort();
-  }
-
-  function filtraAnnunci(filtri) {
-    let visibili = 0;
-    console.log('🔍 Filtri applicati:', filtri);
-    
-    // DEBUG SPECIFICO per località
-    if (filtri.localita && filtri.localita.trim()) {
-      console.log(`🗺️ === RICERCA LOCALITÀ: "${filtri.localita}" (raggio: ${filtri.distance || 0}km) ===`);
+    // Filtro per tipologia usando codici categoria
+    if (filtri.categoryCodes) {
+      const codiciRichiesti = filtri.categoryCodes.split(',').filter(c => c.trim());
+      const codiciCard = (card.dataset.categoriaCodici || '').split(',');
+      
+      if (codiciRichiesti.length > 0) {
+        const hasMatch = codiciRichiesti.some(codice => 
+          codiciCard.includes(codice.trim())
+        );
+        if (!hasMatch) visibile = false;
+      }
     }
-    
-    document.querySelectorAll('.property-card').forEach((card, index) => {
-      let visibile = true;
 
-      // Filtro per tipo contratto
-      if (filtri.contract && filtri.contract !== card.dataset.contratto) {
+    // Filtro per tipologia legacy (fallback)
+    if (filtri.tipo && !filtri.categoryCodes) {
+      const tipi = filtri.tipo.split(',').filter(t => t.trim());
+      const categoria = card.dataset.categoria || '';
+      if (tipi.length > 0 && !tipi.some(tipo => categoria.includes(tipo.trim()))) {
         visibile = false;
       }
+    }
 
-      // Filtro per località con raggio - LOGICA MIGLIORATA + DEBUG
-      if (filtri.localita) {
-        const searchLocation = filtri.localita.toLowerCase().trim();
-        const comune = (card.dataset.comune || '').toLowerCase().trim();
-        const regione = (card.dataset.regione || '').toLowerCase().trim();
-        const provincia = (card.dataset.provincia || '').toLowerCase().trim();
-        const titolo = card.querySelector('.property-title')?.textContent || '';
-        
-        let locationMatch = false;
-        let matchType = '';
-        
-        // MATCH ESATTO - priorità massima
-        if (comune === searchLocation || regione === searchLocation) {
-          locationMatch = true;
-          matchType = 'esatto';
-        }
-        // MATCH STARTSWITH - seconda priorità (solo per nomi lunghi)
-        else if (searchLocation.length >= 5 && (comune.startsWith(searchLocation) || regione.startsWith(searchLocation))) {
-          locationMatch = true;
-          matchType = 'prefisso';
-        }
-        
-        // RAGGIO DI RICERCA - implementazione con mapping località
-        if (!locationMatch && filtri.distance && filtri.distance > 0) {
-          const vicinanze = getLocalitaVicine(searchLocation, filtri.distance);
-          if (vicinanze.includes(comune) || vicinanze.includes(regione)) {
-            locationMatch = true;
-            matchType = `raggio ${filtri.distance}km`;
-          }
-        }
-        
-        // DEBUG per ogni card testata
-        console.log(`🏠 "${titolo.substring(0, 30)}..." → ${comune} | Match: ${locationMatch ? '✅ ' + matchType : '❌'}`);
-        
-        if (!locationMatch) visibile = false;
-      }
-
-      // Filtro per tipologia usando codici categoria
-      if (filtri.categoryCodes) {
-        const codiciRichiesti = filtri.categoryCodes.split(',').filter(c => c.trim());
-        const codiciCard = (card.dataset.categoriaCodici || '').split(',');
-        
-        if (codiciRichiesti.length > 0) {
-          const hasMatch = codiciRichiesti.some(codice => 
-            codiciCard.includes(codice.trim())
-          );
-          if (!hasMatch) visibile = false;
-        }
-      }
-
-      // Filtro per tipologia legacy (fallback)
-      if (filtri.tipo && !filtri.categoryCodes) {
-        const tipi = filtri.tipo.split(',').filter(t => t.trim());
-        const categoria = card.dataset.categoria || '';
-        if (tipi.length > 0 && !tipi.some(tipo => categoria.includes(tipo.trim()))) {
-          visibile = false;
-        }
-      }
-
-      // Filtro per caratteristiche
-      if (filtri.caratteristiche && filtri.caratteristiche.trim()) {
-        const caratteristicheRichieste = filtri.caratteristiche.split(',').filter(c => c.trim());
-        const caratteristicheCard = (card.dataset.caratteristiche || '').split(',').filter(c => c.trim());
-        
-        if (caratteristicheRichieste.length > 0 && 
-            !caratteristicheRichieste.every(char => caratteristicheCard.includes(char.trim()))) {
-          visibile = false;
-        }
-      }
-
-      // Filtro per prezzo
-      const prezzo = parseInt(card.dataset.prezzo) || 0;
-      if (filtri.budgetMin && prezzo > 0 && prezzo < filtri.budgetMin) visibile = false;
-      if (filtri.budgetMax && prezzo > 0 && prezzo > filtri.budgetMax) visibile = false;
-
-      // Filtro per superficie
-      const mq = parseInt(card.dataset.mq) || 0;
-      if (filtri.superficieMin && mq > 0 && mq < filtri.superficieMin) visibile = false;
-      if (filtri.superficieMax && mq > 0 && mq > filtri.superficieMax) visibile = false;
-
-      // Filtro per vani
-      const vani = parseFloat(card.dataset.vani) || 0;
-      if (filtri.vaniMin && vani > 0 && vani < filtri.vaniMin) visibile = false;
-      if (filtri.vaniMax && vani > 0 && vani > filtri.vaniMax) visibile = false;
-
-      // Applica la visibilità
-      card.style.display = visibile ? 'flex' : 'none';
-      if (visibile) visibili++;
-    });
-
-    console.log(`✅ Trovati ${visibili} immobili corrispondenti ai filtri`);
-    
-    // COMUNICAZIONE SEMPLIFICATA - solo conteggio, no loop
-    if (window.parent !== window) {
-      try {
-        window.parent.postMessage({
-          annunciTrovati: visibili
-        }, "*");
-      } catch (e) {
-        console.log('Info: comunicazione parent limitata');
+    // Filtro per caratteristiche
+    if (filtri.caratteristiche && filtri.caratteristiche.trim()) {
+      const caratteristicheRichieste = filtri.caratteristiche.split(',').filter(c => c.trim());
+      const caratteristicheCard = (card.dataset.caratteristiche || '').split(',').filter(c => c.trim());
+      
+      if (caratteristicheRichieste.length > 0 && 
+          !caratteristicheRichieste.every(char => caratteristicheCard.includes(char.trim()))) {
+        visibile = false;
       }
     }
 
-    showNoResultsMessage(visibili);
-  }
+    // Filtro per prezzo
+    const prezzo = parseInt(card.dataset.prezzo) || 0;
+    if (filtri.budgetMin && prezzo > 0 && prezzo < filtri.budgetMin) visibile = false;
+    if (filtri.budgetMax && prezzo > 0 && prezzo > filtri.budgetMax) visibile = false;
 
-  function showNoResultsMessage(count) {
-    let existingMessage = document.querySelector('.no-results');
-    
-    if (count === 0) {
-      if (!existingMessage) {
-        const message = document.createElement('div');
-        message.className = 'no-results';
-        message.innerHTML = `
-          <div style="font-size: 48px; margin-bottom: 20px;">🏠</div>
-          <div style="font-size: 20px; margin-bottom: 10px; color: #6E5C4F; font-weight: 600;">Nessun immobile trovato</div>
-          <div style="color: #777;">Prova a modificare i filtri di ricerca</div>
-        `;
-        document.querySelector('.properties-grid').appendChild(message);
-      }
-    } else {
-      if (existingMessage) {
-        existingMessage.remove();
-      }
-    }
-  }
+    // Filtro per superficie
+    const mq = parseInt(card.dataset.mq) || 0;
+    if (filtri.superficieMin && mq > 0 && mq < filtri.superficieMin) visibile = false;
+    if (filtri.superficieMax && mq > 0 && mq > filtri.superficieMax) visibile = false;
 
-  // COMUNICAZIONE CONTROLLATA - evita loop
-  let lastMessageTime = 0;
+    // Filtro per vani
+    const vani = parseFloat(card.dataset.vani) || 0;
+    if (filtri.vaniMin && vani > 0 && vani < filtri.vaniMin) visibile = false;
+    if (filtri.vaniMax && vani > 0 && vani > filtri.vaniMax) visibile = false;
+
+    // Applica la visibilità
+    card.style.display = visibile ? 'flex' : 'none';
+    if (visibile) visibili++;
+  });
+
+  console.log(`✅ Trovati ${visibili} immobili corrispondenti ai filtri`);
   
-  window.addEventListener('message', function (event) {
-    const now = Date.now();
-    if (now - lastMessageTime < 200) return; // Throttling
-    lastMessageTime = now;
-    
-    const data = event.data;
-    console.log('📨 Messaggio ricevuto:', data);
+  // ANTI-LOOP: Comunicazione solo se in iframe e non già inviata
+  if (window.parent !== window && !window.comunicazioneInCorso) {
+    window.comunicazioneInCorso = true;
+    try {
+      window.parent.postMessage({
+        annunciTrovati: visibili
+      }, "*");
+    } catch (e) {
+      console.log('Info: comunicazione parent limitata');
+    }
+    // Reset flag dopo breve delay
+    setTimeout(() => {
+      window.comunicazioneInCorso = false;
+    }, 500);
+  }
 
-    if (data?.richiestaLocalita) {
-      const localita = estraiLocalita();
-      const totale = document.querySelectorAll('.property-card').length;
-      console.log(`📍 Località disponibili: ${localita.length}, Totale immobili: ${totale}`);
+  showNoResultsMessage(visibili);
+}
 
+function showNoResultsMessage(count) {
+  let existingMessage = document.querySelector('.no-results');
+  
+  if (count === 0) {
+    if (!existingMessage) {
+      const message = document.createElement('div');
+      message.className = 'no-results';
+      message.innerHTML = `
+        <div style="font-size: 48px; margin-bottom: 20px;">🏠</div>
+        <div style="font-size: 20px; margin-bottom: 10px; color: #6E5C4F; font-weight: 600;">Nessun immobile trovato</div>
+        <div style="color: #777;">Prova a modificare i filtri di ricerca</div>
+      `;
+      document.querySelector('.properties-grid').appendChild(message);
+    }
+  } else {
+    if (existingMessage) {
+      existingMessage.remove();
+    }
+  }
+}
+
+// ANTI-LOOP: Controlli multipli per evitare loop infiniti
+let lastMessageTime = 0;
+let messageCount = 0;
+let inizializzato = false;
+
+window.addEventListener('message', function (event) {
+  const now = Date.now();
+  
+  // ANTI-LOOP: Throttling più aggressivo
+  if (now - lastMessageTime < 1000) {
+    console.log('🛑 Messaggio ignorato per throttling');
+    return;
+  }
+  lastMessageTime = now;
+  
+  // ANTI-LOOP: Limite messaggi per evitare spam
+  messageCount++;
+  if (messageCount > 10) {
+    console.log('🛑 Troppi messaggi, fermato per sicurezza');
+    return;
+  }
+  
+  const data = event.data;
+  console.log('📨 Messaggio ricevuto:', data);
+
+  // Reset contatore dopo un po'
+  setTimeout(() => {
+    messageCount = Math.max(0, messageCount - 1);
+  }, 5000);
+
+  if (data?.richiestaLocalita) {
+    const localita = estraiLocalita();
+    const totale = document.querySelectorAll('.property-card').length;
+    console.log(`📍 Località disponibili: ${localita.length}, Totale immobili: ${totale}`);
+
+    if (!window.comunicazioneInCorso) {
+      window.comunicazioneInCorso = true;
       try {
         event.source.postMessage({
           localitaDisponibili: localita,
@@ -879,43 +905,59 @@ La vil...</div>
       } catch (e) {
         console.log('Info: risposta parent limitata');
       }
-      return;
+      setTimeout(() => {
+        window.comunicazioneInCorso = false;
+      }, 500);
     }
+    return;
+  }
 
-    // Applica i filtri ricevuti
-    if (data && typeof data === 'object' && 
-        (data.localita !== undefined || data.tipo || data.caratteristiche || 
-         data.budgetMin || data.budgetMax || data.superficieMin || data.superficieMax ||
-         data.vaniMin || data.vaniMax || data.distance !== undefined || data.categoryCodes)) {
-      filtraAnnunci(data);
-    }
-  });
+  // Applica i filtri ricevuti - SOLO se ha contenuto di filtro
+  if (data && typeof data === 'object' && 
+      (data.localita !== undefined || data.tipo || data.caratteristiche || 
+       data.budgetMin || data.budgetMax || data.superficieMin || data.superficieMax ||
+       data.vaniMin || data.vaniMax || data.distance !== undefined || data.categoryCodes)) {
+    filtraAnnunci(data);
+  }
+});
 
-  // Inizializzazione SEMPLICE
-  document.addEventListener('DOMContentLoaded', function() {
-    const totale = document.querySelectorAll('.property-card').length;
-    console.log(`✅ Caricati ${totale} immobili`);
+// ANTI-LOOP: Inizializzazione più controllata
+document.addEventListener('DOMContentLoaded', function() {
+  if (inizializzato) return; // Evita doppia inizializzazione
+  inizializzato = true;
+  
+  const totale = document.querySelectorAll('.property-card').length;
+  console.log(`✅ Caricati ${totale} immobili`);
+  
+  // ANTI-LOOP: Solo una comunicazione iniziale con controlli
+  if (window.parent !== window && !window.comunicazioneInviata) {
+    window.comunicazioneInviata = true;
     
-    // UNA SOLA comunicazione iniziale
     setTimeout(() => {
-      if (window.parent !== window) {
+      if (!window.comunicazioneInCorso) {
+        window.comunicazioneInCorso = true;
         try {
           window.parent.postMessage({
             annunciTrovati: totale
           }, "*");
+          console.log('📤 Comunicazione iniziale inviata');
         } catch (e) {
           console.log('Info: comunicazione iniziale limitata');
         }
+        setTimeout(() => {
+          window.comunicazioneInCorso = false;
+        }, 500);
       }
-    }, 1000);
-  });
+    }, 2000); // Delay maggiore per evitare race conditions
+  }
+});
 
-  // Gestione errori immagini
-  document.addEventListener('error', function(e) {
-    if (e.target.tagName === 'IMG') {
-      e.target.src = 'https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile';
-    }
-  }, true);
+// Gestione errori immagini
+document.addEventListener('error', function(e) {
+  if (e.target.tagName === 'IMG') {
+    e.target.src = 'https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile';
+  }
+}, true);
 </script>
 
 </body>
