@@ -675,7 +675,7 @@ function getLocalitaVicine(località, raggio) {
       5: [],
       10: ['lugano', 'pregassona'],
       20: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'caslano'],
-      50: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'caslano', 'riva san vitale']
+      50: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale']
     },
     'riva san vitale': {
       5: [],
@@ -820,23 +820,13 @@ function filtraAnnunci(filtri) {
 
   console.log(`✅ Trovati ${visibili} immobili corrispondenti ai filtri`);
   
-  // ANTI-LOOP: Comunicazione solo se in iframe e non già inviata
-  if (window.parent !== window && !window.comunicazioneInCorso) {
-    window.comunicazioneInCorso = true;
-    try {
-      window.parent.postMessage({
-        annunciTrovati: visibili
-      }, "*");
-    } catch (e) {
-      console.log('Info: comunicazione parent limitata');
-    }
-    // Reset flag dopo breve delay
-    setTimeout(() => {
-      window.comunicazioneInCorso = false;
-    }, 500);
-  }
-
+  // *** RIMOSSO: comunicazione automatica per evitare loop ***
+  // La comunicazione avviene solo su richiesta esplicita
+  
   showNoResultsMessage(visibili);
+  
+  // Restituisce il numero per uso interno
+  return visibili;
 }
 
 function showNoResultsMessage(count) {
@@ -860,99 +850,106 @@ function showNoResultsMessage(count) {
   }
 }
 
-// ANTI-LOOP: Controlli multipli per evitare loop infiniti
-let lastMessageTime = 0;
-let messageCount = 0;
-let inizializzato = false;
+// *** SISTEMA ANTI-LOOP COMPLETAMENTE RINNOVATO ***
+let isInitialized = false;
+let lastMessageId = null;
+let processingMessage = false;
+
+function inviaRispostaSicura(data, targetWindow = window.parent) {
+  // Evita invii multipli della stessa risposta
+  const messageId = JSON.stringify(data);
+  if (lastMessageId === messageId) {
+    console.log('🛑 Risposta già inviata, evito duplicato');
+    return;
+  }
+  
+  if (targetWindow !== window) {
+    try {
+      targetWindow.postMessage(data, "*");
+      lastMessageId = messageId;
+      console.log('📤 Risposta inviata:', data);
+      
+      // Reset ID dopo 5 secondi per permettere nuove richieste legittime
+      setTimeout(() => {
+        if (lastMessageId === messageId) {
+          lastMessageId = null;
+        }
+      }, 5000);
+    } catch (e) {
+      console.log('⚠️ Errore invio risposta:', e.message);
+    }
+  }
+}
 
 window.addEventListener('message', function (event) {
-  const now = Date.now();
-  
-  // ANTI-LOOP: Throttling più aggressivo
-  if (now - lastMessageTime < 1000) {
-    console.log('🛑 Messaggio ignorato per throttling');
-    return;
-  }
-  lastMessageTime = now;
-  
-  // ANTI-LOOP: Limite messaggi per evitare spam
-  messageCount++;
-  if (messageCount > 10) {
-    console.log('🛑 Troppi messaggi, fermato per sicurezza');
+  // Evita elaborazione multipla simultanea
+  if (processingMessage) {
+    console.log('🛑 Messaggio ignorato: elaborazione in corso');
     return;
   }
   
-  const data = event.data;
-  console.log('📨 Messaggio ricevuto:', data);
+  processingMessage = true;
+  
+  try {
+    const data = event.data;
+    console.log('📨 Messaggio ricevuto:', data);
 
-  // Reset contatore dopo un po'
-  setTimeout(() => {
-    messageCount = Math.max(0, messageCount - 1);
-  }, 5000);
+    // Gestisce richiesta località
+    if (data?.richiestaLocalita) {
+      const localita = estraiLocalita();
+      const totale = document.querySelectorAll('.property-card').length;
+      console.log(`📍 Località disponibili: ${localita.length}, Totale immobili: ${totale}`);
 
-  if (data?.richiestaLocalita) {
-    const localita = estraiLocalita();
-    const totale = document.querySelectorAll('.property-card').length;
-    console.log(`📍 Località disponibili: ${localita.length}, Totale immobili: ${totale}`);
-
-    if (!window.comunicazioneInCorso) {
-      window.comunicazioneInCorso = true;
-      try {
-        event.source.postMessage({
-          localitaDisponibili: localita,
-          annunciTrovati: totale
-        }, "*");
-      } catch (e) {
-        console.log('Info: risposta parent limitata');
-      }
-      setTimeout(() => {
-        window.comunicazioneInCorso = false;
-      }, 500);
+      inviaRispostaSicura({
+        localitaDisponibili: localita,
+        annunciTrovati: totale,
+        tipo: 'risposta-localita'
+      }, event.source);
+      return;
     }
-    return;
-  }
 
-  // Applica i filtri ricevuti - SOLO se ha contenuto di filtro
-  if (data && typeof data === 'object' && 
-      (data.localita !== undefined || data.tipo || data.caratteristiche || 
-       data.budgetMin || data.budgetMax || data.superficieMin || data.superficieMax ||
-       data.vaniMin || data.vaniMax || data.distance !== undefined || data.categoryCodes)) {
-    filtraAnnunci(data);
+    // Gestisce filtri solo se contengono parametri validi
+    if (data && typeof data === 'object' && 
+        (data.localita !== undefined || data.tipo || data.caratteristiche || 
+         data.budgetMin || data.budgetMax || data.superficieMin || data.superficieMax ||
+         data.vaniMin || data.vaniMax || data.distance !== undefined || data.categoryCodes)) {
+      
+      const risultati = filtraAnnunci(data);
+      
+      // Invia risposta SOLO se richiesta esplicitamente
+      if (data.richiestaRisposta) {
+        inviaRispostaSicura({
+          annunciTrovati: risultati,
+          tipo: 'risposta-filtri'
+        }, event.source);
+      }
+    }
+    
+  } finally {
+    // Rilascia il lock dopo breve delay
+    setTimeout(() => {
+      processingMessage = false;
+    }, 100);
   }
 });
 
-// ANTI-LOOP: Inizializzazione più controllata
+// *** INIZIALIZZAZIONE SEMPLIFICATA ***
 document.addEventListener('DOMContentLoaded', function() {
-  if (inizializzato) return; // Evita doppia inizializzazione
-  inizializzato = true;
+  if (isInitialized) {
+    console.log('⚠️ Già inizializzato, evito doppia inizializzazione');
+    return;
+  }
   
+  isInitialized = true;
   const totale = document.querySelectorAll('.property-card').length;
   console.log(`✅ Caricati ${totale} immobili`);
   
-  // ANTI-LOOP: Solo una comunicazione iniziale con controlli
-  if (window.parent !== window && !window.comunicazioneInviata) {
-    window.comunicazioneInviata = true;
-    
-    setTimeout(() => {
-      if (!window.comunicazioneInCorso) {
-        window.comunicazioneInCorso = true;
-        try {
-          window.parent.postMessage({
-            annunciTrovati: totale
-          }, "*");
-          console.log('📤 Comunicazione iniziale inviata');
-        } catch (e) {
-          console.log('Info: comunicazione iniziale limitata');
-        }
-        setTimeout(() => {
-          window.comunicazioneInCorso = false;
-        }, 500);
-      }
-    }, 2000); // Delay maggiore per evitare race conditions
-  }
+  // *** COMUNICAZIONE INIZIALE RIMOSSA ***
+  // Non invia più messaggi automatici al caricamento
+  // La comunicazione avviene solo su richiesta del parent
 });
 
-// Gestione errori immagini
+// Gestione errori immagini (questa rimane invariata)
 document.addEventListener('error', function(e) {
   if (e.target.tagName === 'IMG') {
     e.target.src = 'https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile';
