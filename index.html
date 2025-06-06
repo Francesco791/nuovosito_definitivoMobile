@@ -656,6 +656,14 @@ La vil...</div>
     let visibili = 0;
     console.log('🔍 Filtri applicati:', filtri);
     
+    // DEBUG SPECIALE per caratteristiche
+    if (filtri.caratteristiche) {
+      console.log('🏷️ CARATTERISTICHE DEBUG:', {
+        ricevute: filtri.caratteristiche,
+        array: filtri.caratteristiche.split(',')
+      });
+    }
+    
     document.querySelectorAll('.property-card').forEach(card => {
       let visibile = true;
 
@@ -710,10 +718,18 @@ La vil...</div>
         }
       }
 
-      // Filtro per caratteristiche
-      if (filtri.categoria) {
-        const caratteristicheRichieste = filtri.categoria.split(',').filter(c => c.trim());
+      // Filtro per caratteristiche - FIX NOME CAMPO + DEBUG
+      if (filtri.caratteristiche) {
+        const caratteristicheRichieste = filtri.caratteristiche.split(',').filter(c => c.trim());
         const caratteristicheCard = (card.dataset.caratteristiche || '').split(',');
+        const titolo = card.querySelector('.property-title')?.textContent || '';
+        
+        console.log(`🏷️ CHECK "${titolo}":`, {
+          richieste: caratteristicheRichieste,
+          disponibili: caratteristicheCard,
+          match: caratteristicheRichieste.every(char => caratteristicheCard.includes(char.trim()))
+        });
+        
         if (caratteristicheRichieste.length > 0 && 
             !caratteristicheRichieste.every(char => caratteristicheCard.includes(char.trim()))) {
           visibile = false;
