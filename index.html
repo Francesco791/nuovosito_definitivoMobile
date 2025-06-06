@@ -22,26 +22,66 @@
       color: #6E5C4F;
     }
 
+    /* Grid responsive FISSO - sempre 4 colonne fino a tablet */
     .properties-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 30px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      padding: 20px 0;
+      min-width: 0;
       width: 100%;
-      margin: 0;
-      padding: 0 20px;
-      box-sizing: border-box;
     }
 
+    /* Media queries più rigide per evitare cambi automatici */
+    @media screen and (max-width: 1400px) {
+      .properties-grid {
+        grid-template-columns: repeat(4, 1fr); /* FORZA 4 colonne */
+        gap: 18px;
+      }
+    }
+
+    @media screen and (max-width: 1200px) {
+      .properties-grid {
+        grid-template-columns: repeat(4, 1fr); /* ANCORA 4 colonne */
+        gap: 16px;
+      }
+    }
+
+    @media screen and (max-width: 1000px) {
+      .properties-grid {
+        grid-template-columns: repeat(3, 1fr); /* Solo qui 3 colonne */
+        gap: 15px;
+      }
+    }
+
+    @media screen and (max-width: 768px) {
+      .properties-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      .properties-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+    }
+
+    /* Card con dimensioni FISSE per evitare cambi layout */
     .property-card {
       display: flex;
       flex-direction: column;
-      background-color: #ffffff;
-      border: 1px solid #e2e2e2;
+      background: white;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      font-family: 'Nunito', sans-serif;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      border: 1px solid #e5e7eb;
+      height: 100%;
+      min-width: 250px; /* LARGHEZZA MINIMA FISSA */
+      max-width: 100%;  /* EVITA ESPANSIONE ECCESSIVA */
+      position: relative;
     }
 
     .property-card:hover {
@@ -210,16 +250,6 @@
         padding: 15px 0;
       }
       
-      .properties-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-        padding: 0 15px;
-      }
-      
-      .property-card {
-        margin: 0;
-      }
-      
       .property-buttons {
         flex-direction: column;
         gap: 8px;
@@ -234,39 +264,6 @@
         border-radius: 12px;
         min-width: auto;
       }
-    }
-
-    /* Stili specifici per desktop - larghezza completa */
-    @media (min-width: 769px) {
-      .properties-grid {
-        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-        gap: 25px;
-        padding: 0 15px;
-      }
-      
-      .property-card {
-        min-height: 500px;
-      }
-    }
-
-    /* Per schermi molto larghi */
-    @media (min-width: 1400px) {
-      .properties-grid {
-        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-        gap: 30px;
-        padding: 0 20px;
-      }
-    }
-
-    /* Animazioni aggiuntive */
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-
-    .contact-button:hover::before {
-      animation: pulse 0.6s ease-in-out;
     }
 
     /* Effetto shimmer per il bottone principale */
@@ -641,92 +638,44 @@ La vil...</div>
 </div>
 
 <script>
-  function estraiLocalita() {
-    const locationSet = new Set();
-    document.querySelectorAll('.property-card').forEach(card => {
-      const comune = card.dataset.comune;
-      const regione = card.dataset.regione;
-      if (comune) locationSet.add(comune.charAt(0).toUpperCase() + comune.slice(1));
-      if (regione && regione !== comune) locationSet.add(regione.charAt(0).toUpperCase() + regione.slice(1));
-    });
-    return Array.from(locationSet).sort();
-  }
-
-  function filtraAnnunci(filtri) {
+  // VERSIONE SEMPLIFICATA - NO COMUNICAZIONE - SOLO FILTRI LOCALI
+  let ultimiFiltri = {};
+  
+  function filtraAnnunci(filtri = {}) {
     let visibili = 0;
     console.log('🔍 Filtri applicati:', filtri);
-    
-    // DEBUG RIDOTTO per caratteristiche (solo se presente)
-    if (filtri.caratteristiche && filtri.caratteristiche.trim()) {
-      console.log('🏷️ Filtraggio per caratteristiche:', filtri.caratteristiche);
-    }
     
     document.querySelectorAll('.property-card').forEach((card, index) => {
       let visibile = true;
 
-      // Filtro per tipo contratto
-      if (filtri.contract && filtri.contract !== card.dataset.contratto) {
-        visibile = false;
-      }
-
-      // Filtro per località con distanza - logica migliorata
-      if (filtri.localita) {
-        const searchLocation = filtri.localita.toLowerCase().trim();
-        const comune = (card.dataset.comune || '').toLowerCase().trim();
-        const regione = (card.dataset.regione || '').toLowerCase().trim();
-        const provincia = (card.dataset.provincia || '').toLowerCase().trim();
+      // Filtro per località
+      if (filtri.localita && filtri.localita.trim()) {
+        const comune = (card.dataset.comune || '').toLowerCase();
+        const regione = (card.dataset.regione || '').toLowerCase();
+        const provincia = (card.dataset.provincia || '').toLowerCase();
+        const localitaCercata = filtri.localita.toLowerCase();
         
-        let locationMatch = false;
-        
-        if (comune === searchLocation || regione === searchLocation) {
-          locationMatch = true;
-        } else if (comune.startsWith(searchLocation) || regione.startsWith(searchLocation)) {
-          locationMatch = true;
-        } else if (searchLocation.length >= 4 && provincia.includes(searchLocation)) {
-          locationMatch = true;
-        }
-
-        if (!locationMatch && filtri.distance && filtri.distance > 0) {
-          // Logica distanza geografica se implementata
-        }
-        
-        if (!locationMatch) visibile = false;
-      }
-
-      // Filtro per tipologia usando codici categoria
-      if (filtri.categoryCodes) {
-        const codiciRichiesti = filtri.categoryCodes.split(',').filter(c => c.trim());
-        const codiciCard = (card.dataset.categoriaCodici || '').split(',');
-        
-        if (codiciRichiesti.length > 0) {
-          const hasMatch = codiciRichiesti.some(codice => 
-            codiciCard.includes(codice.trim())
-          );
-          if (!hasMatch) visibile = false;
-        }
-      }
-
-      // Filtro per tipologia legacy (fallback)
-      if (filtri.tipo && !filtri.categoryCodes) {
-        const tipi = filtri.tipo.split(',').filter(t => t.trim());
-        const categoria = card.dataset.categoria || '';
-        if (tipi.length > 0 && !tipi.some(tipo => categoria.includes(tipo.trim()))) {
+        if (!comune.includes(localitaCercata) && 
+            !regione.includes(localitaCercata) && 
+            !provincia.includes(localitaCercata)) {
           visibile = false;
         }
       }
 
-      // Filtro per caratteristiche - OTTIMIZZATO
+      // Filtro per tipologia
+      if (filtri.tipo && filtri.tipo.trim()) {
+        const tipiRichiesti = filtri.tipo.split(',').filter(t => t.trim());
+        const tipologiaCard = card.dataset.categoria || '';
+        
+        if (tipiRichiesti.length > 0 && !tipiRichiesti.includes(tipologiaCard)) {
+          visibile = false;
+        }
+      }
+
+      // Filtro per caratteristiche
       if (filtri.caratteristiche && filtri.caratteristiche.trim()) {
         const caratteristicheRichieste = filtri.caratteristiche.split(',').filter(c => c.trim());
         const caratteristicheCard = (card.dataset.caratteristiche || '').split(',').filter(c => c.trim());
-        
-        // Debug solo per il primo card se necessario
-        if (index === 0 && caratteristicheRichieste.length > 0) {
-          console.log('🏷️ Esempio matching:', {
-            richieste: caratteristicheRichieste,
-            disponibili: caratteristicheCard
-          });
-        }
         
         if (caratteristicheRichieste.length > 0 && 
             !caratteristicheRichieste.every(char => caratteristicheCard.includes(char.trim()))) {
@@ -734,226 +683,51 @@ La vil...</div>
         }
       }
 
-      // Filtro per prezzo
-      const prezzo = parseInt(card.dataset.prezzo) || 0;
-      if (filtri.budgetMin && prezzo > 0 && prezzo < filtri.budgetMin) visibile = false;
-      if (filtri.budgetMax && prezzo > 0 && prezzo > filtri.budgetMax) visibile = false;
-
-      // Filtro per superficie
-      const mq = parseInt(card.dataset.mq) || 0;
-      if (filtri.superficieMin && mq > 0 && mq < filtri.superficieMin) visibile = false;
-      if (filtri.superficieMax && mq > 0 && mq > filtri.superficieMax) visibile = false;
+      // Filtro per budget
+      if (filtri.budgetMax && filtri.budgetMax > 0) {
+        const prezzo = parseInt(card.dataset.prezzo) || 0;
+        if (prezzo > 0 && prezzo > filtri.budgetMax) {
+          visibile = false;
+        }
+      }
 
       // Filtro per vani
-      const vani = parseFloat(card.dataset.vani) || 0;
-      if (filtri.vaniMin && vani > 0 && vani < filtri.vaniMin) visibile = false;
-      if (filtri.vaniMax && vani > 0 && vani > filtri.vaniMax) visibile = false;
+      if (filtri.vaniMax && filtri.vaniMax < 10) {
+        const vani = parseFloat(card.dataset.vani) || 0;
+        if (vani > filtri.vaniMax) {
+          visibile = false;
+        }
+      }
 
-      // Applica la visibilità
-      card.style.display = visibile ? 'flex' : 'none';
-      if (visibile) visibili++;
-    });
+      // Filtro per superficie
+      if (filtri.superficieMax && filtri.superficieMax < 1000) {
+        const mq = parseInt(card.dataset.mq) || 0;
+        if (mq > filtri.superficieMax) {
+          visibile = false;
+        }
+      }
 
-    console.log(`✅ Trovati ${visibili} immobili corrispondenti ai filtri`);
-
-    // Invia il risultato al parent
-    if (window.parent !== window) {
-      window.parent.postMessage({
-        annunciTrovati: visibili
-      }, "*");
-    }
-
-    // Mostra messaggio se nessun risultato
-    showNoResultsMessage(visibili);
-    
-    // Ridimensiona iframe
-    setTimeout(postHeight, 300);
-  }
-
-  // NUOVA FUNZIONE: Filtro per caratteristiche
-  function filtraPerCaratteristiche(caratteristiche) {
-    let visibili = 0;
-    
-    document.querySelectorAll('.property-card').forEach(card => {
-      const hasCaratteristiche = verificaCaratteristiche(card, caratteristiche);
-      card.style.display = hasCaratteristiche ? 'flex' : 'none';
-      if (hasCaratteristiche) visibili++;
-    });
-
-    console.log(`✅ Trovati ${visibili} immobili con caratteristiche:`, caratteristiche);
-    
-    // Invia risultato al parent
-    if (window.parent !== window) {
-      window.parent.postMessage({
-        annunciTrovati: visibili
-      }, "*");
-    }
-    
-    showNoResultsMessage(visibili);
-    setTimeout(postHeight, 300);
-  }
-
-  // NUOVA FUNZIONE: Verifica se una card ha le caratteristiche richieste
-  function verificaCaratteristiche(card, caratteristiche) {
-    if (!caratteristiche || caratteristiche.length === 0) return true;
-    
-    // Estrai tutti i testi per la ricerca
-    const titolo = card.querySelector('.property-title')?.textContent.toLowerCase() || '';
-    const descrizione = card.querySelector('.property-description')?.textContent.toLowerCase() || '';
-    const location = card.querySelector('.property-location')?.textContent.toLowerCase() || '';
-    const caratteristicheCard = card.dataset.caratteristiche || '';
-    
-    // Combina tutti i testi
-    const testoCompleto = `${titolo} ${descrizione} ${location} ${caratteristicheCard}`.toLowerCase();
-    
-    // Verifica ogni caratteristica richiesta
-    return caratteristiche.every(caratteristica => {
-      const char = caratteristica.toLowerCase();
-      
-      switch(char) {
-        case 'vista lago':
-          return testoCompleto.includes('vista lago') || 
-                 testoCompleto.includes('lago') ||
-                 testoCompleto.includes('vista sul lago') ||
-                 testoCompleto.includes('panoramic') ||
-                 location.includes('lago');
-        
-        case 'attico':
-          return testoCompleto.includes('attico');
-        
-        case 'giardino':
-          return testoCompleto.includes('giardino') ||
-                 caratteristicheCard.includes('giardino') ||
-                 testoCompleto.includes('garden');
-        
-        case 'piscina':
-          return testoCompleto.includes('piscina') ||
-                 testoCompleto.includes('pool') ||
-                 caratteristicheCard.includes('piscina');
-        
-        case 'costruzione':
-          return testoCompleto.includes('costruzione') ||
-                 testoCompleto.includes('nuova costruzione') ||
-                 testoCompleto.includes('in costruzione') ||
-                 testoCompleto.includes('nuovo');
-        
-        case 'ristrutturare':
-          return testoCompleto.includes('ristruttura') ||
-                 testoCompleto.includes('da ristrutturare') ||
-                 testoCompleto.includes('ristrutturato') ||
-                 testoCompleto.includes('ristrutturazione') ||
-                 testoCompleto.includes('renovated');
-        
-        default:
-          return testoCompleto.includes(char);
+      // Applica visibilità
+      if (visibile) {
+        card.style.display = 'flex';
+        visibili++;
+      } else {
+        card.style.display = 'none';
       }
     });
+
+    console.log(`✅ ${visibili} immobili visibili`);
+    ultimiFiltri = filtri;
+    return visibili;
   }
 
-  function showNoResultsMessage(count) {
-    let existingMessage = document.querySelector('.no-results');
-    
-    if (count === 0) {
-      if (!existingMessage) {
-        const message = document.createElement('div');
-        message.className = 'no-results';
-        message.innerHTML = `
-          <div style="font-size: 48px; margin-bottom: 20px;">🏠</div>
-          <div style="font-size: 20px; margin-bottom: 10px; color: #6E5C4F; font-weight: 600;">Nessun immobile trovato</div>
-          <div style="color: #777;">Prova a modificare i filtri di ricerca</div>
-        `;
-        document.querySelector('.properties-grid').appendChild(message);
-      }
-    } else {
-      if (existingMessage) {
-        existingMessage.remove();
-      }
-    }
-  }
-
-  // Event listeners
-  window.addEventListener('message', function (event) {
-    const data = event.data;
-    console.log('📨 Messaggio ricevuto:', data);
-
-    // NUOVO: Gestione filtro caratteristiche
-    if (data?.type === 'FILTER_CARATTERISTICHE') {
-      const caratteristiche = data.caratteristiche || [];
-      console.log('🏷️ Filtro caratteristiche ricevuto:', caratteristiche);
-      
-      filtraPerCaratteristiche(caratteristiche);
-      return;
-    }
-
-    if (data?.richiestaLocalita) {
-      const localita = estraiLocalita();
-      const totale = document.querySelectorAll('.property-card').length;
-      console.log(`📍 Località disponibili: ${localita.length}, Totale immobili: ${totale}`);
-
-      event.source.postMessage({
-        localitaDisponibili: localita,
-        annunciTrovati: totale
-      }, "*");
-    }
-
-    // Applica i filtri ricevuti
-    if (data && typeof data === 'object' && 
-        (data.contract || data.localita || data.tipo || data.categoria || 
-         data.budgetMin || data.budgetMax || data.superficieMin || data.superficieMax ||
-         data.vaniMin || data.vaniMax || data.distance !== undefined)) {
-      filtraAnnunci(data);
-    }
-  });
-
-  // Funzioni per ridimensionamento iframe
-  function postHeight() {
-    if (window.parent !== window) {
-      const height = Math.max(
-        document.body.scrollHeight,
-        document.documentElement.scrollHeight,
-        600
-      );
-      window.parent.postMessage({
-        height: height
-      }, "*");
-    }
-  }
-
-  // Eventi per ridimensionamento
-  window.addEventListener("load", () => {
-    setTimeout(postHeight, 500);
-  });
-  
-  window.addEventListener("resize", postHeight);
-  
-  // Osservatore per cambiamenti nel DOM
-  const observer = new MutationObserver(() => {
-    setTimeout(postHeight, 100);
-  });
-  
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-    attributes: true,
-    attributeFilter: ['style']
-  });
-
-  // Ridimensionamento periodico
-  setInterval(postHeight, 3000);
-
-  // Inizializzazione
+  // INIZIALIZZAZIONE SEMPLICE - NESSUNA COMUNICAZIONE
   document.addEventListener('DOMContentLoaded', function() {
-    const totale = document.querySelectorAll('.property-card').length;
-    console.log(`✅ Caricati ${totale} immobili`);
+    console.log('🚀 Sito caricato correttamente');
     
-    setTimeout(() => {
-      if (window.parent !== window) {
-        window.parent.postMessage({
-          annunciTrovati: totale
-        }, "*");
-      }
-      postHeight();
-    }, 1000);
+    // Mostra tutti gli annunci inizialmente
+    const totalAnnunci = document.querySelectorAll('.property-card').length;
+    console.log(`📊 Totale annunci disponibili: ${totalAnnunci}`);
   });
 
   // Gestione errori immagini
