@@ -3,29 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <title>Annunci Immobiliari</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Nunito', sans-serif;
       margin: 0;
-      padding: 40px 20px;
+      padding: 20px 0;
       background-color: #fefefe;
       color: #2d2d2d;
     }
 
     h2 {
+      font-family: 'Playfair Display', serif;
       font-size: 2rem;
       font-weight: 700;
       margin-bottom: 30px;
       text-align: center;
+      color: #6E5C4F;
     }
 
     .properties-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 35px;
-      max-width: 1300px;
-      margin: 0 auto;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 30px;
+      width: 100%;
+      margin: 0;
+      padding: 0 20px;
+      box-sizing: border-box;
     }
 
     .property-card {
@@ -36,11 +40,13 @@
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
-      transition: transform 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      font-family: 'Nunito', sans-serif;
     }
 
     .property-card:hover {
       transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(110, 92, 79, 0.15);
     }
 
     .property-image img {
@@ -55,47 +61,229 @@
       flex: 1;
       display: flex;
       flex-direction: column;
+      font-family: 'Nunito', sans-serif;
     }
 
     .property-title {
+      font-family: 'Nunito', sans-serif;
       font-size: 18px;
       font-weight: 700;
       margin-bottom: 8px;
+      color: #2d2d2d;
     }
 
     .property-location {
+      font-family: 'Nunito', sans-serif;
       font-size: 15px;
       color: #777;
       margin-bottom: 8px;
     }
 
     .property-price {
+      font-family: 'Nunito', sans-serif;
       font-size: 18px;
       font-weight: bold;
       color: #6E5C4F;
-      margin-bottom: 14px;
+      margin-bottom: 8px;
+    }
+
+    .property-specs {
+      font-family: 'Nunito', sans-serif;
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 12px;
+      font-weight: 500;
     }
 
     .property-description {
+      font-family: 'Nunito', sans-serif;
       font-size: 15px;
       color: #444;
       margin-bottom: 16px;
       flex-grow: 1;
+      line-height: 1.5;
+    }
+
+    .property-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: auto;
+      align-items: center;
     }
 
     .view-button {
-      align-self: start;
-      padding: 10px 20px;
+      flex: 1;
+      padding: 12px 16px;
       background-color: #6E5C4F;
       color: #fff;
       text-decoration: none;
-      font-size: 15px;
-      border-radius: 4px;
-      transition: background-color 0.3s ease;
+      font-family: 'Nunito', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .view-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .view-button:hover::before {
+      left: 100%;
     }
 
     .view-button:hover {
       background-color: #594b40;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(110, 92, 79, 0.3);
+    }
+
+    .contact-button {
+      padding: 10px 16px;
+      background: linear-gradient(135deg, #6E5C4F 0%, #8B7355 100%);
+      color: white;
+      text-decoration: none;
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(110, 92, 79, 0.2);
+      min-width: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .contact-button::before {
+      content: '💬';
+      font-size: 12px;
+    }
+
+    .contact-button:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 6px 16px rgba(110, 92, 79, 0.4);
+      background: linear-gradient(135deg, #8B7355 0%, #6E5C4F 100%);
+    }
+
+    .contact-button:active {
+      transform: translateY(-1px) scale(1.02);
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+      font-family: 'Nunito', sans-serif;
+      font-size: 18px;
+      grid-column: 1 / -1;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #6E5C4F;
+      font-family: 'Nunito', sans-serif;
+      font-size: 16px;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 15px 0;
+      }
+      
+      .properties-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 0 15px;
+      }
+      
+      .property-card {
+        margin: 0;
+      }
+      
+      .property-buttons {
+        flex-direction: column;
+        gap: 8px;
+      }
+      
+      .view-button, .contact-button {
+        flex: none;
+        width: 100%;
+      }
+
+      .contact-button {
+        border-radius: 8px;
+        min-width: auto;
+      }
+    }
+
+    /* Stili specifici per desktop - larghezza completa */
+    @media (min-width: 769px) {
+      .properties-grid {
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        gap: 25px;
+        padding: 0 15px;
+      }
+      
+      .property-card {
+        min-height: 500px;
+      }
+    }
+
+    /* Per schermi molto larghi */
+    @media (min-width: 1400px) {
+      .properties-grid {
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        gap: 30px;
+        padding: 0 20px;
+      }
+    }
+
+    /* Animazioni aggiuntive */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .contact-button:hover::before {
+      animation: pulse 0.6s ease-in-out;
+    }
+
+    /* Effetto shimmer per il bottone principale */
+    .view-button {
+      background: linear-gradient(45deg, #6E5C4F 30%, #7a655a 50%, #6E5C4F 70%);
+      background-size: 200% 100%;
+      animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .view-button:hover {
+      animation: none;
+      background: #594b40;
     }
   </style>
 </head>
@@ -130,7 +318,7 @@
 
 Questa proprietà, completamente ris...</div>
         <div class="property-buttons">
-          <a class="view-button" href="[object Object]" target="_blank">
+          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=6GD5OAEwx04B46TV3lTeOj5nKScFIKeI/QjlNlfkWwc=" target="_blank">
             Vedi Dettagli
           </a>
           <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
@@ -166,7 +354,7 @@ Questa proprietà, completamente ris...</div>
 
 La vil...</div>
         <div class="property-buttons">
-          <a class="view-button" href="[object Object]" target="_blank">
+          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=4hEUv1xl7mHBxulBcTaX74rk2CSCJxol68baaSR6Pyw=" target="_blank">
             Vedi Dettagli
           </a>
           <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
@@ -200,7 +388,7 @@ La vil...</div>
         <div class="property-specs">80 m² • 2,5 vani • 0 camere • 2 bagni</div>
         <div class="property-description">In una tranquilla e pianeggiante zona residenziale di Lugano, a pochi passi dal lago e dal vivace centro città, ben collegata con i mezzi pubblici, pr...</div>
         <div class="property-buttons">
-          <a class="view-button" href="[object Object]" target="_blank">
+          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=+3G7DlmOP3AgpsczD8kA/aaKGmzcRT4saLoyqPM9MKQ=" target="_blank">
             Vedi Dettagli
           </a>
           <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
@@ -234,7 +422,7 @@ La vil...</div>
         <div class="property-specs">500 m² • 7,5 vani • 4 camere • 4 bagni</div>
         <div class="property-description">In posizione dominante, con una vista spettacolare su Riva San Vitale, il lago e le montagne circostanti, questa affascinante proprietà rappresenta un...</div>
         <div class="property-buttons">
-          <a class="view-button" href="[object Object]" target="_blank">
+          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=v6VQbyEewCpycTSKYJ53hQVWW2+laY7QK1PA85aeRFM=" target="_blank">
             Vedi Dettagli
           </a>
           <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
@@ -268,7 +456,7 @@ La vil...</div>
         <div class="property-specs">171 m² • 4,5 vani • 3 camere • 2 bagni</div>
         <div class="property-description">Nel comune di Canobbio, in una posizione residenziale privilegiata, nasceranno due ville dal design moderno e raffinato, progettate per valorizzare la...</div>
         <div class="property-buttons">
-          <a class="view-button" href="[object Object]" target="_blank">
+          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=U1IsN+5sU3/OVS8sUOh9Wi64zzV1rs3zd3ttvPblkyY=" target="_blank">
             Vedi Dettagli
           </a>
           <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
@@ -302,7 +490,7 @@ La vil...</div>
         <div class="property-specs">63 m² • 2,5 vani • 1 camere • 1 bagni</div>
         <div class="property-description">Suchen Sie eine Ferienwohnung mit 2.5 Zimmern, die Komfort, Entspannung und eine erstklassige Lage vereint? Dann ist diese Immobilie genau das Richtig...</div>
         <div class="property-buttons">
-          <a class="view-button" href="[object Object]" target="_blank">
+          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=F4ybDsB2BFt9A2wYvEA6XgIMdlNu09Yg1OQTAcIclds=" target="_blank">
             Vedi Dettagli
           </a>
           <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
@@ -336,7 +524,7 @@ La vil...</div>
         <div class="property-specs">209 m² • 4,5 vani • 3 camere • 3 bagni</div>
         <div class="property-description">In posizione collinare sopra Lugano, proponiamo in vendita un elegante attico con vista panoramica mozzafiato sulla città e sul lago. Situato in una m...</div>
         <div class="property-buttons">
-          <a class="view-button" href="[object Object]" target="_blank">
+          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=jC+pLRFJbMX/oZ6FJisGjUYQKQEIb1JIxDlbi64okl8=" target="_blank">
             Vedi Dettagli
           </a>
           <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
@@ -370,7 +558,7 @@ La vil...</div>
         <div class="property-specs">73 m² • 2,5 vani • 1 camere • 1 bagni</div>
         <div class="property-description">In posizione collinare sopra Lugano, proponiamo in vendita uno splendido appartamento di 2,5 locali con giardino privato. Situato in una moderna resid...</div>
         <div class="property-buttons">
-          <a class="view-button" href="[object Object]" target="_blank">
+          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=tr8YFyCBnGSkAY+4ofUqXzNDO5Tz/VFsidMjXy+dpSE=" target="_blank">
             Vedi Dettagli
           </a>
           <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
@@ -406,7 +594,7 @@ La vil...</div>
 
 ...</div>
         <div class="property-buttons">
-          <a class="view-button" href="[object Object]" target="_blank">
+          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=q/8s2NSMMqRsAlJpR0fcnzFz2jDfrVCDZ5m7USK9nWQ=" target="_blank">
             Vedi Dettagli
           </a>
           <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
@@ -440,7 +628,7 @@ La vil...</div>
         <div class="property-specs">45 m² • 2,5 vani • 0 camere • 1 bagni</div>
         <div class="property-description">A pochi passi dal centro e dal lago, in posizione comoda e ben servita, proponiamo in vendita un luminoso appartamento di 2.5 locali, completamente ri...</div>
         <div class="property-buttons">
-          <a class="view-button" href="[object Object]" target="_blank">
+          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=+3mSh8yxosBVGpVWihYi+2xMMcJGUAVEwNR6/Od6KMw=" target="_blank">
             Vedi Dettagli
           </a>
           <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
@@ -455,39 +643,238 @@ La vil...</div>
 <script>
   function estraiLocalita() {
     const locationSet = new Set();
-    document.querySelectorAll('.property-location').forEach(el => {
-      const text = el.textContent.trim();
-      if (text) locationSet.add(text);
-    });
-    return Array.from(locationSet);
-  }
-
-  function filtraAnnunci({ tipo, categoria, localita }) {
     document.querySelectorAll('.property-card').forEach(card => {
-      const descrizione = card.querySelector('.property-description')?.textContent.toLowerCase() || '';
-      const location = card.querySelector('.property-location')?.textContent.toLowerCase() || '';
-      const contratto = card.dataset.contratto?.toLowerCase() || '';
-
-      let visibile = true;
-      if (tipo && contratto !== tipo.toLowerCase()) visibile = false;
-      if (categoria && !descrizione.includes(categoria.toLowerCase())) visibile = false;
-      if (localita && !location.includes(localita.toLowerCase())) visibile = false;
-
-      card.style.display = visibile ? 'block' : 'none';
+      const comune = card.dataset.comune;
+      const regione = card.dataset.regione;
+      if (comune) locationSet.add(comune.charAt(0).toUpperCase() + comune.slice(1));
+      if (regione && regione !== comune) locationSet.add(regione.charAt(0).toUpperCase() + regione.slice(1));
     });
-
-    const visibili = document.querySelectorAll('.property-card:not([style*="display: none"])').length;
-    event?.source?.postMessage?.({
-      annunciTrovati: visibili
-    }, "*");
+    return Array.from(locationSet).sort();
   }
 
+  function filtraAnnunci(filtri) {
+    let visibili = 0;
+    console.log('🔍 Filtri applicati:', filtri);
+    
+    document.querySelectorAll('.property-card').forEach(card => {
+      let visibile = true;
+
+      // Filtro per tipo contratto
+      if (filtri.contract && filtri.contract !== card.dataset.contratto) {
+        visibile = false;
+      }
+
+      // Filtro per località con distanza - logica migliorata
+      if (filtri.localita) {
+        const searchLocation = filtri.localita.toLowerCase().trim();
+        const comune = (card.dataset.comune || '').toLowerCase().trim();
+        const regione = (card.dataset.regione || '').toLowerCase().trim();
+        const provincia = (card.dataset.provincia || '').toLowerCase().trim();
+        
+        let locationMatch = false;
+        
+        if (comune === searchLocation || regione === searchLocation) {
+          locationMatch = true;
+        } else if (comune.startsWith(searchLocation) || regione.startsWith(searchLocation)) {
+          locationMatch = true;
+        } else if (searchLocation.length >= 4 && provincia.includes(searchLocation)) {
+          locationMatch = true;
+        }
+
+        if (!locationMatch && filtri.distance && filtri.distance > 0) {
+          // Logica distanza geografica se implementata
+        }
+        
+        if (!locationMatch) visibile = false;
+      }
+
+      // Filtro per tipologia usando codici categoria
+      if (filtri.categoryCodes) {
+        const codiciRichiesti = filtri.categoryCodes.split(',').filter(c => c.trim());
+        const codiciCard = (card.dataset.categoriaCodici || '').split(',');
+        
+        if (codiciRichiesti.length > 0) {
+          const hasMatch = codiciRichiesti.some(codice => 
+            codiciCard.includes(codice.trim())
+          );
+          if (!hasMatch) visibile = false;
+        }
+      }
+
+      // Filtro per tipologia legacy (fallback)
+      if (filtri.tipo && !filtri.categoryCodes) {
+        const tipi = filtri.tipo.split(',').filter(t => t.trim());
+        const categoria = card.dataset.categoria || '';
+        if (tipi.length > 0 && !tipi.some(tipo => categoria.includes(tipo.trim()))) {
+          visibile = false;
+        }
+      }
+
+      // Filtro per caratteristiche
+      if (filtri.categoria) {
+        const caratteristicheRichieste = filtri.categoria.split(',').filter(c => c.trim());
+        const caratteristicheCard = (card.dataset.caratteristiche || '').split(',');
+        if (caratteristicheRichieste.length > 0 && 
+            !caratteristicheRichieste.every(char => caratteristicheCard.includes(char.trim()))) {
+          visibile = false;
+        }
+      }
+
+      // Filtro per prezzo
+      const prezzo = parseInt(card.dataset.prezzo) || 0;
+      if (filtri.budgetMin && prezzo > 0 && prezzo < filtri.budgetMin) visibile = false;
+      if (filtri.budgetMax && prezzo > 0 && prezzo > filtri.budgetMax) visibile = false;
+
+      // Filtro per superficie
+      const mq = parseInt(card.dataset.mq) || 0;
+      if (filtri.superficieMin && mq > 0 && mq < filtri.superficieMin) visibile = false;
+      if (filtri.superficieMax && mq > 0 && mq > filtri.superficieMax) visibile = false;
+
+      // Filtro per vani
+      const vani = parseFloat(card.dataset.vani) || 0;
+      if (filtri.vaniMin && vani > 0 && vani < filtri.vaniMin) visibile = false;
+      if (filtri.vaniMax && vani > 0 && vani > filtri.vaniMax) visibile = false;
+
+      // Applica la visibilità
+      card.style.display = visibile ? 'flex' : 'none';
+      if (visibile) visibili++;
+    });
+
+    console.log(`✅ Trovati ${visibili} immobili corrispondenti ai filtri`);
+
+    // Invia il risultato al parent
+    if (window.parent !== window) {
+      window.parent.postMessage({
+        annunciTrovati: visibili
+      }, "*");
+    }
+
+    // Mostra messaggio se nessun risultato
+    showNoResultsMessage(visibili);
+    
+    // Ridimensiona iframe
+    setTimeout(postHeight, 300);
+  }
+
+  // NUOVA FUNZIONE: Filtro per caratteristiche
+  function filtraPerCaratteristiche(caratteristiche) {
+    let visibili = 0;
+    
+    document.querySelectorAll('.property-card').forEach(card => {
+      const hasCaratteristiche = verificaCaratteristiche(card, caratteristiche);
+      card.style.display = hasCaratteristiche ? 'flex' : 'none';
+      if (hasCaratteristiche) visibili++;
+    });
+
+    console.log(`✅ Trovati ${visibili} immobili con caratteristiche:`, caratteristiche);
+    
+    // Invia risultato al parent
+    if (window.parent !== window) {
+      window.parent.postMessage({
+        annunciTrovati: visibili
+      }, "*");
+    }
+    
+    showNoResultsMessage(visibili);
+    setTimeout(postHeight, 300);
+  }
+
+  // NUOVA FUNZIONE: Verifica se una card ha le caratteristiche richieste
+  function verificaCaratteristiche(card, caratteristiche) {
+    if (!caratteristiche || caratteristiche.length === 0) return true;
+    
+    // Estrai tutti i testi per la ricerca
+    const titolo = card.querySelector('.property-title')?.textContent.toLowerCase() || '';
+    const descrizione = card.querySelector('.property-description')?.textContent.toLowerCase() || '';
+    const location = card.querySelector('.property-location')?.textContent.toLowerCase() || '';
+    const caratteristicheCard = card.dataset.caratteristiche || '';
+    
+    // Combina tutti i testi
+    const testoCompleto = `${titolo} ${descrizione} ${location} ${caratteristicheCard}`.toLowerCase();
+    
+    // Verifica ogni caratteristica richiesta
+    return caratteristiche.every(caratteristica => {
+      const char = caratteristica.toLowerCase();
+      
+      switch(char) {
+        case 'vista lago':
+          return testoCompleto.includes('vista lago') || 
+                 testoCompleto.includes('lago') ||
+                 testoCompleto.includes('vista sul lago') ||
+                 testoCompleto.includes('panoramic') ||
+                 location.includes('lago');
+        
+        case 'attico':
+          return testoCompleto.includes('attico');
+        
+        case 'giardino':
+          return testoCompleto.includes('giardino') ||
+                 caratteristicheCard.includes('giardino') ||
+                 testoCompleto.includes('garden');
+        
+        case 'piscina':
+          return testoCompleto.includes('piscina') ||
+                 testoCompleto.includes('pool') ||
+                 caratteristicheCard.includes('piscina');
+        
+        case 'costruzione':
+          return testoCompleto.includes('costruzione') ||
+                 testoCompleto.includes('nuova costruzione') ||
+                 testoCompleto.includes('in costruzione') ||
+                 testoCompleto.includes('nuovo');
+        
+        case 'ristrutturare':
+          return testoCompleto.includes('ristruttura') ||
+                 testoCompleto.includes('da ristrutturare') ||
+                 testoCompleto.includes('ristrutturato') ||
+                 testoCompleto.includes('ristrutturazione') ||
+                 testoCompleto.includes('renovated');
+        
+        default:
+          return testoCompleto.includes(char);
+      }
+    });
+  }
+
+  function showNoResultsMessage(count) {
+    let existingMessage = document.querySelector('.no-results');
+    
+    if (count === 0) {
+      if (!existingMessage) {
+        const message = document.createElement('div');
+        message.className = 'no-results';
+        message.innerHTML = `
+          <div style="font-size: 48px; margin-bottom: 20px;">🏠</div>
+          <div style="font-size: 20px; margin-bottom: 10px; color: #6E5C4F; font-weight: 600;">Nessun immobile trovato</div>
+          <div style="color: #777;">Prova a modificare i filtri di ricerca</div>
+        `;
+        document.querySelector('.properties-grid').appendChild(message);
+      }
+    } else {
+      if (existingMessage) {
+        existingMessage.remove();
+      }
+    }
+  }
+
+  // Event listeners
   window.addEventListener('message', function (event) {
     const data = event.data;
+    console.log('📨 Messaggio ricevuto:', data);
+
+    // NUOVO: Gestione filtro caratteristiche
+    if (data?.type === 'FILTER_CARATTERISTICHE') {
+      const caratteristiche = data.caratteristiche || [];
+      console.log('🏷️ Filtro caratteristiche ricevuto:', caratteristiche);
+      
+      filtraPerCaratteristiche(caratteristiche);
+      return;
+    }
 
     if (data?.richiestaLocalita) {
       const localita = estraiLocalita();
       const totale = document.querySelectorAll('.property-card').length;
+      console.log(`📍 Località disponibili: ${localita.length}, Totale immobili: ${totale}`);
 
       event.source.postMessage({
         localitaDisponibili: localita,
@@ -495,24 +882,72 @@ La vil...</div>
       }, "*");
     }
 
-    if (data?.tipo || data?.categoria || data?.localita) {
+    // Applica i filtri ricevuti
+    if (data && typeof data === 'object' && 
+        (data.contract || data.localita || data.tipo || data.categoria || 
+         data.budgetMin || data.budgetMax || data.superficieMin || data.superficieMax ||
+         data.vaniMin || data.vaniMax || data.distance !== undefined)) {
       filtraAnnunci(data);
     }
   });
 
+  // Funzioni per ridimensionamento iframe
   function postHeight() {
-    window.parent.postMessage({
-      height: document.body.scrollHeight
-    }, "*");
+    if (window.parent !== window) {
+      const height = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        600
+      );
+      window.parent.postMessage({
+        height: height
+      }, "*");
+    }
   }
 
-  window.addEventListener("load", postHeight);
+  // Eventi per ridimensionamento
+  window.addEventListener("load", () => {
+    setTimeout(postHeight, 500);
+  });
+  
   window.addEventListener("resize", postHeight);
-  window.addEventListener("click", postHeight);
-  window.addEventListener("scroll", () => {
+  
+  // Osservatore per cambiamenti nel DOM
+  const observer = new MutationObserver(() => {
     setTimeout(postHeight, 100);
   });
-  setInterval(postHeight, 2500);
+  
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['style']
+  });
+
+  // Ridimensionamento periodico
+  setInterval(postHeight, 3000);
+
+  // Inizializzazione
+  document.addEventListener('DOMContentLoaded', function() {
+    const totale = document.querySelectorAll('.property-card').length;
+    console.log(`✅ Caricati ${totale} immobili`);
+    
+    setTimeout(() => {
+      if (window.parent !== window) {
+        window.parent.postMessage({
+          annunciTrovati: totale
+        }, "*");
+      }
+      postHeight();
+    }, 1000);
+  });
+
+  // Gestione errori immagini
+  document.addEventListener('error', function(e) {
+    if (e.target.tagName === 'IMG') {
+      e.target.src = 'https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile';
+    }
+  }, true);
 </script>
 
 </body>
