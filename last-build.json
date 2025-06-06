@@ -1,0 +1,14 @@
+{
+  "timestamp": 1749217001245,
+  "success": true,
+  "date": "2025-06-06T13:36:41.245Z",
+  "stats": {
+    "xmlFetchTime": 315,
+    "parseTime": 19,
+    "generateTime": 4,
+    "totalTime": 0
+  },
+  "version": "2.0",
+  "reason": "no_changes",
+  "properties_count": 10
+}
