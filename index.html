@@ -638,36 +638,71 @@ La vil...</div>
 </div>
 
 <script>
-  // VERSIONE SEMPLIFICATA - NO COMUNICAZIONE - SOLO FILTRI LOCALI
-  let ultimiFiltri = {};
-  
-  function filtraAnnunci(filtri = {}) {
+  function estraiLocalita() {
+    const locationSet = new Set();
+    document.querySelectorAll('.property-card').forEach(card => {
+      const comune = card.dataset.comune;
+      const regione = card.dataset.regione;
+      if (comune) locationSet.add(comune.charAt(0).toUpperCase() + comune.slice(1));
+      if (regione && regione !== comune) locationSet.add(regione.charAt(0).toUpperCase() + regione.slice(1));
+    });
+    return Array.from(locationSet).sort();
+  }
+
+  function filtraAnnunci(filtri) {
     let visibili = 0;
     console.log('🔍 Filtri applicati:', filtri);
     
     document.querySelectorAll('.property-card').forEach((card, index) => {
       let visibile = true;
 
-      // Filtro per località
-      if (filtri.localita && filtri.localita.trim()) {
-        const comune = (card.dataset.comune || '').toLowerCase();
-        const regione = (card.dataset.regione || '').toLowerCase();
-        const provincia = (card.dataset.provincia || '').toLowerCase();
-        const localitaCercata = filtri.localita.toLowerCase();
+      // Filtro per tipo contratto
+      if (filtri.contract && filtri.contract !== card.dataset.contratto) {
+        visibile = false;
+      }
+
+      // Filtro per località con distanza - logica migliorata
+      if (filtri.localita) {
+        const searchLocation = filtri.localita.toLowerCase().trim();
+        const comune = (card.dataset.comune || '').toLowerCase().trim();
+        const regione = (card.dataset.regione || '').toLowerCase().trim();
+        const provincia = (card.dataset.provincia || '').toLowerCase().trim();
         
-        if (!comune.includes(localitaCercata) && 
-            !regione.includes(localitaCercata) && 
-            !provincia.includes(localitaCercata)) {
-          visibile = false;
+        let locationMatch = false;
+        
+        if (comune === searchLocation || regione === searchLocation) {
+          locationMatch = true;
+        } else if (comune.startsWith(searchLocation) || regione.startsWith(searchLocation)) {
+          locationMatch = true;
+        } else if (searchLocation.length >= 4 && provincia.includes(searchLocation)) {
+          locationMatch = true;
+        }
+
+        if (!locationMatch && filtri.distance && filtri.distance > 0) {
+          // Logica distanza geografica se implementata
+        }
+        
+        if (!locationMatch) visibile = false;
+      }
+
+      // Filtro per tipologia usando codici categoria
+      if (filtri.categoryCodes) {
+        const codiciRichiesti = filtri.categoryCodes.split(',').filter(c => c.trim());
+        const codiciCard = (card.dataset.categoriaCodici || '').split(',');
+        
+        if (codiciRichiesti.length > 0) {
+          const hasMatch = codiciRichiesti.some(codice => 
+            codiciCard.includes(codice.trim())
+          );
+          if (!hasMatch) visibile = false;
         }
       }
 
-      // Filtro per tipologia
-      if (filtri.tipo && filtri.tipo.trim()) {
-        const tipiRichiesti = filtri.tipo.split(',').filter(t => t.trim());
-        const tipologiaCard = card.dataset.categoria || '';
-        
-        if (tipiRichiesti.length > 0 && !tipiRichiesti.includes(tipologiaCard)) {
+      // Filtro per tipologia legacy (fallback)
+      if (filtri.tipo && !filtri.categoryCodes) {
+        const tipi = filtri.tipo.split(',').filter(t => t.trim());
+        const categoria = card.dataset.categoria || '';
+        if (tipi.length > 0 && !tipi.some(tipo => categoria.includes(tipo.trim()))) {
           visibile = false;
         }
       }
@@ -683,51 +718,116 @@ La vil...</div>
         }
       }
 
-      // Filtro per budget
-      if (filtri.budgetMax && filtri.budgetMax > 0) {
-        const prezzo = parseInt(card.dataset.prezzo) || 0;
-        if (prezzo > 0 && prezzo > filtri.budgetMax) {
-          visibile = false;
-        }
-      }
-
-      // Filtro per vani
-      if (filtri.vaniMax && filtri.vaniMax < 10) {
-        const vani = parseFloat(card.dataset.vani) || 0;
-        if (vani > filtri.vaniMax) {
-          visibile = false;
-        }
-      }
+      // Filtro per prezzo
+      const prezzo = parseInt(card.dataset.prezzo) || 0;
+      if (filtri.budgetMin && prezzo > 0 && prezzo < filtri.budgetMin) visibile = false;
+      if (filtri.budgetMax && prezzo > 0 && prezzo > filtri.budgetMax) visibile = false;
 
       // Filtro per superficie
-      if (filtri.superficieMax && filtri.superficieMax < 1000) {
-        const mq = parseInt(card.dataset.mq) || 0;
-        if (mq > filtri.superficieMax) {
-          visibile = false;
-        }
-      }
+      const mq = parseInt(card.dataset.mq) || 0;
+      if (filtri.superficieMin && mq > 0 && mq < filtri.superficieMin) visibile = false;
+      if (filtri.superficieMax && mq > 0 && mq > filtri.superficieMax) visibile = false;
 
-      // Applica visibilità
-      if (visibile) {
-        card.style.display = 'flex';
-        visibili++;
-      } else {
-        card.style.display = 'none';
-      }
+      // Filtro per vani
+      const vani = parseFloat(card.dataset.vani) || 0;
+      if (filtri.vaniMin && vani > 0 && vani < filtri.vaniMin) visibile = false;
+      if (filtri.vaniMax && vani > 0 && vani > filtri.vaniMax) visibile = false;
+
+      // Applica la visibilità
+      card.style.display = visibile ? 'flex' : 'none';
+      if (visibile) visibili++;
     });
 
-    console.log(`✅ ${visibili} immobili visibili`);
-    ultimiFiltri = filtri;
-    return visibili;
+    console.log(`✅ Trovati ${visibili} immobili corrispondenti ai filtri`);
+    
+    // COMUNICAZIONE SEMPLIFICATA - solo conteggio, no loop
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          annunciTrovati: visibili
+        }, "*");
+      } catch (e) {
+        console.log('Info: comunicazione parent limitata');
+      }
+    }
+
+    showNoResultsMessage(visibili);
   }
 
-  // INIZIALIZZAZIONE SEMPLICE - NESSUNA COMUNICAZIONE
-  document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Sito caricato correttamente');
+  function showNoResultsMessage(count) {
+    let existingMessage = document.querySelector('.no-results');
     
-    // Mostra tutti gli annunci inizialmente
-    const totalAnnunci = document.querySelectorAll('.property-card').length;
-    console.log(`📊 Totale annunci disponibili: ${totalAnnunci}`);
+    if (count === 0) {
+      if (!existingMessage) {
+        const message = document.createElement('div');
+        message.className = 'no-results';
+        message.innerHTML = `
+          <div style="font-size: 48px; margin-bottom: 20px;">🏠</div>
+          <div style="font-size: 20px; margin-bottom: 10px; color: #6E5C4F; font-weight: 600;">Nessun immobile trovato</div>
+          <div style="color: #777;">Prova a modificare i filtri di ricerca</div>
+        `;
+        document.querySelector('.properties-grid').appendChild(message);
+      }
+    } else {
+      if (existingMessage) {
+        existingMessage.remove();
+      }
+    }
+  }
+
+  // COMUNICAZIONE CONTROLLATA - evita loop
+  let lastMessageTime = 0;
+  
+  window.addEventListener('message', function (event) {
+    const now = Date.now();
+    if (now - lastMessageTime < 200) return; // Throttling
+    lastMessageTime = now;
+    
+    const data = event.data;
+    console.log('📨 Messaggio ricevuto:', data);
+
+    if (data?.richiestaLocalita) {
+      const localita = estraiLocalita();
+      const totale = document.querySelectorAll('.property-card').length;
+      console.log(`📍 Località disponibili: ${localita.length}, Totale immobili: ${totale}`);
+
+      try {
+        event.source.postMessage({
+          localitaDisponibili: localita,
+          annunciTrovati: totale
+        }, "*");
+      } catch (e) {
+        console.log('Info: risposta parent limitata');
+      }
+      return;
+    }
+
+    // Applica i filtri ricevuti
+    if (data && typeof data === 'object' && 
+        (data.localita !== undefined || data.tipo || data.caratteristiche || 
+         data.budgetMin || data.budgetMax || data.superficieMin || data.superficieMax ||
+         data.vaniMin || data.vaniMax || data.distance !== undefined || data.categoryCodes)) {
+      filtraAnnunci(data);
+    }
+  });
+
+  // Inizializzazione SEMPLICE
+  document.addEventListener('DOMContentLoaded', function() {
+    const totale = document.querySelectorAll('.property-card').length;
+    console.log(`✅ Caricati ${totale} immobili`);
+    
+    // UNA SOLA comunicazione iniziale
+    setTimeout(() => {
+      if (window.parent !== window) {
+        try {
+          window.parent.postMessage({
+            annunciTrovati: totale
+          }, "*");
+        } catch (e) {
+          console.log('Info: comunicazione iniziale limitata');
+        }
+      }
+    }, 1000);
   });
 
   // Gestione errori immagini
