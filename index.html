@@ -638,6 +638,68 @@ La vil...</div>
 </div>
 
 <script>
+  // NUOVA FUNZIONE: Calcola località vicine in base al raggio
+  function getLocalitaVicine(località, raggio) {
+    const mappingDistanze = {
+      'lugano': {
+        5: ['pregassona', 'canobbio', 'bosco luganese'],
+        10: ['pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano'],
+        20: ['pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale'],
+        50: ['pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale', 'mendrisio', 'chiasso', 'locarno', 'bellinzona']
+      },
+      'caslano': {
+        5: ['lugano'],
+        10: ['lugano', 'pregassona', 'canobbio'],
+        20: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'torricella'],
+        50: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'torricella', 'riva san vitale']
+      },
+      'pregassona': {
+        5: ['lugano', 'canobbio'],
+        10: ['lugano', 'canobbio', 'bosco luganese'],
+        20: ['lugano', 'canobbio', 'bosco luganese', 'torricella', 'caslano'],
+        50: ['lugano', 'canobbio', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale']
+      },
+      'canobbio': {
+        5: ['lugano', 'pregassona'],
+        10: ['lugano', 'pregassona', 'bosco luganese'],
+        20: ['lugano', 'pregassona', 'bosco luganese', 'torricella', 'caslano'],
+        50: ['lugano', 'pregassona', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale']
+      },
+      'bosco luganese': {
+        5: ['lugano'],
+        10: ['lugano', 'pregassona', 'canobbio'],
+        20: ['lugano', 'pregassona', 'canobbio', 'torricella', 'caslano'],
+        50: ['lugano', 'pregassona', 'canobbio', 'torricella', 'caslano', 'riva san vitale']
+      },
+      'torricella': {
+        5: [],
+        10: ['lugano', 'pregassona'],
+        20: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'caslano'],
+        50: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'caslano', 'riva san vitale']
+      },
+      'riva san vitale': {
+        5: [],
+        10: ['mendrisio'],
+        20: ['mendrisio', 'lugano'],
+        50: ['mendrisio', 'lugano', 'pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano']
+      }
+    };
+
+    const localitàNorm = località.toLowerCase().trim();
+    
+    // Trova il raggio più vicino disponibile
+    const raggiDisponibili = [5, 10, 20, 50];
+    const raggioEffettivo = raggiDisponibili.find(r => r >= raggio) || 50;
+    
+    if (mappingDistanze[localitàNorm] && mappingDistanze[localitàNorm][raggioEffettivo]) {
+      console.log(`🗺️ ${località} raggio ${raggio}km → trovate: ${mappingDistanze[localitàNorm][raggioEffettivo].join(', ')}`);
+      return mappingDistanze[localitàNorm][raggioEffettivo];
+    }
+    
+    console.log(`🗺️ ${località} raggio ${raggio}km → nessuna località mappata`);
+    return [];
+  }
+
   function estraiLocalita() {
     const locationSet = new Set();
     document.querySelectorAll('.property-card').forEach(card => {
@@ -653,6 +715,11 @@ La vil...</div>
     let visibili = 0;
     console.log('🔍 Filtri applicati:', filtri);
     
+    // DEBUG SPECIFICO per località
+    if (filtri.localita && filtri.localita.trim()) {
+      console.log(`🗺️ === RICERCA LOCALITÀ: "${filtri.localita}" (raggio: ${filtri.distance || 0}km) ===`);
+    }
+    
     document.querySelectorAll('.property-card').forEach((card, index) => {
       let visibile = true;
 
@@ -661,26 +728,39 @@ La vil...</div>
         visibile = false;
       }
 
-      // Filtro per località con distanza - logica migliorata
+      // Filtro per località con raggio - LOGICA MIGLIORATA + DEBUG
       if (filtri.localita) {
         const searchLocation = filtri.localita.toLowerCase().trim();
         const comune = (card.dataset.comune || '').toLowerCase().trim();
         const regione = (card.dataset.regione || '').toLowerCase().trim();
         const provincia = (card.dataset.provincia || '').toLowerCase().trim();
+        const titolo = card.querySelector('.property-title')?.textContent || '';
         
         let locationMatch = false;
+        let matchType = '';
         
+        // MATCH ESATTO - priorità massima
         if (comune === searchLocation || regione === searchLocation) {
           locationMatch = true;
-        } else if (comune.startsWith(searchLocation) || regione.startsWith(searchLocation)) {
-          locationMatch = true;
-        } else if (searchLocation.length >= 4 && provincia.includes(searchLocation)) {
-          locationMatch = true;
+          matchType = 'esatto';
         }
-
+        // MATCH STARTSWITH - seconda priorità (solo per nomi lunghi)
+        else if (searchLocation.length >= 5 && (comune.startsWith(searchLocation) || regione.startsWith(searchLocation))) {
+          locationMatch = true;
+          matchType = 'prefisso';
+        }
+        
+        // RAGGIO DI RICERCA - implementazione con mapping località
         if (!locationMatch && filtri.distance && filtri.distance > 0) {
-          // Logica distanza geografica se implementata
+          const vicinanze = getLocalitaVicine(searchLocation, filtri.distance);
+          if (vicinanze.includes(comune) || vicinanze.includes(regione)) {
+            locationMatch = true;
+            matchType = `raggio ${filtri.distance}km`;
+          }
         }
+        
+        // DEBUG per ogni card testata
+        console.log(`🏠 "${titolo.substring(0, 30)}..." → ${comune} | Match: ${locationMatch ? '✅ ' + matchType : '❌'}`);
         
         if (!locationMatch) visibile = false;
       }
