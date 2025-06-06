@@ -656,15 +656,12 @@ La vil...</div>
     let visibili = 0;
     console.log('🔍 Filtri applicati:', filtri);
     
-    // DEBUG SPECIALE per caratteristiche
-    if (filtri.caratteristiche) {
-      console.log('🏷️ CARATTERISTICHE DEBUG:', {
-        ricevute: filtri.caratteristiche,
-        array: filtri.caratteristiche.split(',')
-      });
+    // DEBUG RIDOTTO per caratteristiche (solo se presente)
+    if (filtri.caratteristiche && filtri.caratteristiche.trim()) {
+      console.log('🏷️ Filtraggio per caratteristiche:', filtri.caratteristiche);
     }
     
-    document.querySelectorAll('.property-card').forEach(card => {
+    document.querySelectorAll('.property-card').forEach((card, index) => {
       let visibile = true;
 
       // Filtro per tipo contratto
@@ -718,17 +715,18 @@ La vil...</div>
         }
       }
 
-      // Filtro per caratteristiche - FIX NOME CAMPO + DEBUG
-      if (filtri.caratteristiche) {
+      // Filtro per caratteristiche - OTTIMIZZATO
+      if (filtri.caratteristiche && filtri.caratteristiche.trim()) {
         const caratteristicheRichieste = filtri.caratteristiche.split(',').filter(c => c.trim());
-        const caratteristicheCard = (card.dataset.caratteristiche || '').split(',');
-        const titolo = card.querySelector('.property-title')?.textContent || '';
+        const caratteristicheCard = (card.dataset.caratteristiche || '').split(',').filter(c => c.trim());
         
-        console.log(`🏷️ CHECK "${titolo}":`, {
-          richieste: caratteristicheRichieste,
-          disponibili: caratteristicheCard,
-          match: caratteristicheRichieste.every(char => caratteristicheCard.includes(char.trim()))
-        });
+        // Debug solo per il primo card se necessario
+        if (index === 0 && caratteristicheRichieste.length > 0) {
+          console.log('🏷️ Esempio matching:', {
+            richieste: caratteristicheRichieste,
+            disponibili: caratteristicheCard
+          });
+        }
         
         if (caratteristicheRichieste.length > 0 && 
             !caratteristicheRichieste.every(char => caratteristicheCard.includes(char.trim()))) {
