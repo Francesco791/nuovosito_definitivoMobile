@@ -2,960 +2,903 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Annunci Immobiliari</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Immobili in Ticino - Trova la tua casa ideale</title>
+  <meta name="description" content="Scopri le migliori offerte immobiliari nel Canton Ticino. Case, ville e appartamenti in vendita e affitto.">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Nunito', sans-serif;
       margin: 0;
-      padding: 20px 0;
+      padding: 0;
       background-color: #fefefe;
       color: #2d2d2d;
+      line-height: 1.6;
     }
 
-    h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 30px;
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
       text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
       color: #6E5C4F;
     }
 
-    /* Grid responsive FISSO - sempre 4 colonne fino a tablet */
+    .subtitle {
+      font-size: 1.1rem;
+      color: #777;
+      margin-bottom: 30px;
+    }
+
+    /* Filtri */
+    .filters {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      align-items: end;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .filter-group label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .filter-group select,
+    .filter-group input {
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    .filter-group select:focus,
+    .filter-group input:focus {
+      outline: none;
+      border-color: #6E5C4F;
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      background-color: #6E5C4F;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #594b40;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background-color: #f8f9fa;
+      color: #6E5C4F;
+      border: 2px solid #e5e7eb;
+    }
+
+    .btn-secondary:hover {
+      border-color: #6E5C4F;
+    }
+
+    /* Grid immobili */
     .properties-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      padding: 20px 0;
-      min-width: 0;
-      width: 100%;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
     }
 
-    /* Media queries più rigide per evitare cambi automatici */
-    @media screen and (max-width: 1400px) {
+    @media (min-width: 1200px) {
       .properties-grid {
-        grid-template-columns: repeat(4, 1fr); /* FORZA 4 colonne */
-        gap: 18px;
+        grid-template-columns: repeat(4, 1fr);
       }
     }
 
-    @media screen and (max-width: 1200px) {
+    @media (max-width: 768px) {
       .properties-grid {
-        grid-template-columns: repeat(4, 1fr); /* ANCORA 4 colonne */
-        gap: 16px;
-      }
-    }
-
-    @media screen and (max-width: 1000px) {
-      .properties-grid {
-        grid-template-columns: repeat(3, 1fr); /* Solo qui 3 colonne */
+        grid-template-columns: repeat(2, 1fr);
         gap: 15px;
       }
     }
 
-    @media screen and (max-width: 768px) {
-      .properties-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-      }
-    }
-
-    @media screen and (max-width: 480px) {
+    @media (max-width: 480px) {
       .properties-grid {
         grid-template-columns: 1fr;
-        gap: 10px;
       }
     }
 
-    /* Card con dimensioni FISSE per evitare cambi layout */
+    /* Card immobili */
     .property-card {
       display: flex;
       flex-direction: column;
       background: white;
-      border-radius: 12px;
+      border-radius: 15px;
       overflow: hidden;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
       border: 1px solid #e5e7eb;
       height: 100%;
-      min-width: 250px; /* LARGHEZZA MINIMA FISSA */
-      max-width: 100%;  /* EVITA ESPANSIONE ECCESSIVA */
-      position: relative;
     }
 
     .property-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 20px rgba(110, 92, 79, 0.15);
+      transform: translateY(-8px);
+      box-shadow: 0 8px 25px rgba(110, 92, 79, 0.2);
+    }
+
+    .property-image {
+      position: relative;
+      overflow: hidden;
     }
 
     .property-image img {
       width: 100%;
       height: 250px;
       object-fit: cover;
-      border-bottom: 1px solid #e2e2e2;
+      transition: transform 0.3s ease;
+    }
+
+    .property-card:hover .property-image img {
+      transform: scale(1.05);
+    }
+
+    .property-badge {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: rgba(110, 92, 79, 0.9);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
     }
 
     .property-details {
-      padding: 24px;
+      padding: 25px;
       flex: 1;
       display: flex;
       flex-direction: column;
-      font-family: 'Nunito', sans-serif;
     }
 
     .property-title {
-      font-family: 'Nunito', sans-serif;
       font-size: 18px;
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       color: #2d2d2d;
+      line-height: 1.3;
     }
 
     .property-location {
-      font-family: 'Nunito', sans-serif;
-      font-size: 15px;
+      font-size: 14px;
       color: #777;
-      margin-bottom: 8px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .property-location::before {
+      content: '📍';
+      font-size: 12px;
     }
 
     .property-price {
-      font-family: 'Nunito', sans-serif;
-      font-size: 18px;
+      font-size: 20px;
       font-weight: bold;
       color: #6E5C4F;
-      margin-bottom: 8px;
+      margin-bottom: 15px;
     }
 
     .property-specs {
-      font-family: 'Nunito', sans-serif;
-      font-size: 14px;
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      font-size: 13px;
       color: #666;
-      margin-bottom: 12px;
-      font-weight: 500;
+      flex-wrap: wrap;
+    }
+
+    .spec-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .property-description {
-      font-family: 'Nunito', sans-serif;
-      font-size: 15px;
-      color: #444;
-      margin-bottom: 16px;
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 20px;
       flex-grow: 1;
       line-height: 1.5;
+    }
+
+    .property-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .feature-tag {
+      background: #f0f9ff;
+      color: #0369a1;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
     }
 
     .property-buttons {
       display: flex;
       gap: 12px;
       margin-top: auto;
-      align-items: center;
     }
 
     .view-button {
       flex: 1;
       padding: 12px 16px;
-      background-color: #6E5C4F;
-      color: #fff;
-      text-decoration: none;
-      font-family: 'Nunito', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: 12px;
-      transition: all 0.3s ease;
-      border: none;
-      cursor: pointer;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .view-button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: left 0.5s ease;
-    }
-
-    .view-button:hover::before {
-      left: 100%;
-    }
-
-    .view-button:hover {
-      background-color: #594b40;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(110, 92, 79, 0.3);
-    }
-
-    .contact-button {
-      padding: 10px 16px;
       background: linear-gradient(135deg, #6E5C4F 0%, #8B7355 100%);
       color: white;
       text-decoration: none;
-      font-family: 'Nunito', sans-serif;
-      font-size: 13px;
       font-weight: 600;
-      border-radius: 12px;
+      border-radius: 10px;
       transition: all 0.3s ease;
-      border: none;
-      cursor: pointer;
       text-align: center;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(110, 92, 79, 0.2);
-      min-width: 100px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
+      font-size: 14px;
     }
 
-    .contact-button::before {
-      content: '💬';
-      font-size: 12px;
+    .view-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(110, 92, 79, 0.3);
+    }
+
+    .contact-button {
+      padding: 12px 16px;
+      background: white;
+      color: #6E5C4F;
+      border: 2px solid #6E5C4F;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      text-align: center;
+      font-size: 14px;
     }
 
     .contact-button:hover {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 6px 16px rgba(110, 92, 79, 0.4);
-      background: linear-gradient(135deg, #8B7355 0%, #6E5C4F 100%);
+      background: #6E5C4F;
+      color: white;
     }
 
-    .contact-button:active {
-      transform: translateY(-1px) scale(1.02);
+    /* Stati di caricamento */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: #6E5C4F;
+      font-size: 18px;
     }
 
     .no-results {
       text-align: center;
       padding: 60px 20px;
       color: #666;
-      font-family: 'Nunito', sans-serif;
       font-size: 18px;
       grid-column: 1 / -1;
     }
 
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: #6E5C4F;
-      font-family: 'Nunito', sans-serif;
-      font-size: 16px;
+    .no-results-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
     }
 
+    /* Statistiche */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: #6E5C4F;
+      display: block;
+    }
+
+    /* Responsive filters */
     @media (max-width: 768px) {
-      body {
-        padding: 15px 0;
+      .filters-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
       }
-      
+
+      .filter-actions {
+        justify-content: stretch;
+      }
+
+      .btn {
+        flex: 1;
+      }
+
       .property-buttons {
         flex-direction: column;
         gap: 8px;
       }
-      
-      .view-button, .contact-button {
-        flex: none;
-        width: 100%;
-      }
-
-      .contact-button {
-        border-radius: 12px;
-        min-width: auto;
-      }
-    }
-
-    /* Effetto shimmer per il bottone principale */
-    .view-button {
-      background: linear-gradient(45deg, #6E5C4F 30%, #7a655a 50%, #6E5C4F 70%);
-      background-size: 200% 100%;
-      animation: shimmer 3s ease-in-out infinite;
-    }
-
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-
-    .view-button:hover {
-      animation: none;
-      background: #594b40;
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <div class="header">
+      <h1>Immobili in Ticino</h1>
+      <p class="subtitle">Trova la casa dei tuoi sogni nel Canton Ticino</p>
+    </div>
 
-<h2>Annunci Immobiliari</h2>
-
-<div class="properties-grid">
-  
-    <div class="property-card" 
-         data-contratto="vendita"
-         data-categoria="casa"
-         data-categoria-codici="28"
-         data-caratteristiche="vista,giardino,box"
-         data-comune="bosco luganese"
-         data-regione="ticino"
-         data-provincia="tidistretto di lugano"
-         data-prezzo="1340000"
-         data-mq="165"
-         data-vani="3,5"
-         data-camere="2"
-         data-bagni="2">
-      <div class="property-image">
-        <img src="https://img.miogest.com/26948/0/imm_304-20250424101315-1280-.jpeg" alt="Moderna casa unifamiliare con portico" onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Moderna casa unifamiliare con portico</div>
-        <div class="property-location">Bosco Luganese, Ticino</div>
-        <div class="property-price">CHF 1’340’000</div>
-        <div class="property-specs">165 m² • 3,5 vani • 2 camere • 2 bagni</div>
-        <div class="property-description">Splendida villa unifamiliare con vista panoramica sulle montagne, situata in una zona tranquilla e ben servita.
-
-Questa proprietà, completamente ris...</div>
-        <div class="property-buttons">
-          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=6GD5OAEwx04B46TV3lTeOj5nKScFIKeI/QjlNlfkWwc=" target="_blank">
-            Vedi Dettagli
-          </a>
-          <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
-            Contattaci
-          </a>
+    <!-- Filtri -->
+    <div class="filters">
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label for="location">Località</label>
+          <select id="location">
+            <option value="">Tutte le località</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="contract">Contratto</label>
+          <select id="contract">
+            <option value="">Tutti</option>
+            <option value="vendita">Vendita</option>
+            <option value="affitto">Affitto</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="type">Tipologia</label>
+          <select id="type">
+            <option value="">Tutti</option>
+            <option value="casa">Casa/Villa</option>
+            <option value="appartamento">Appartamento</option>
+            <option value="commerciale">Commerciale</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="priceMax">Prezzo max (CHF)</label>
+          <input type="number" id="priceMax" placeholder="Es. 1000000">
+        </div>
+        
+        <div class="filter-group">
+          <label for="rooms">Vani min</label>
+          <select id="rooms">
+            <option value="">Qualsiasi</option>
+            <option value="1">1+</option>
+            <option value="2">2+</option>
+            <option value="3">3+</option>
+            <option value="4">4+</option>
+            <option value="5">5+</option>
+          </select>
+        </div>
+        
+        <div class="filter-actions">
+          <button class="btn btn-primary" onclick="applyFilters()">🔍 Cerca</button>
+          <button class="btn btn-secondary" onclick="resetFilters()">↻ Reset</button>
         </div>
       </div>
     </div>
-  
 
-    <div class="property-card" 
-         data-contratto="vendita"
-         data-categoria="casa"
-         data-categoria-codici="28"
-         data-caratteristiche="vista,giardino,terrazzo,box"
-         data-comune="torricella"
-         data-regione="ticino"
-         data-provincia="tidistretto di lugano"
-         data-prezzo="1790000"
-         data-mq="260"
-         data-vani="5,5"
-         data-camere="4"
-         data-bagni="4">
-      <div class="property-image">
-        <img src="https://img.miogest.com/26948/0/imm_261-20250305131204-1280-.jpeg" alt="Bella villa nel verde " onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
+    <!-- Statistiche -->
+    <div class="stats" id="stats" style="display: none;">
+      <div class="stat-item">
+        <span class="stat-number" id="totalCount">0</span>
+        <span>Immobili totali</span>
       </div>
-      <div class="property-details">
-        <div class="property-title">Bella villa nel verde </div>
-        <div class="property-location">Torricella, Ticino</div>
-        <div class="property-price">CHF 1’790’000</div>
-        <div class="property-specs">260 m² • 5,5 vani • 4 camere • 4 bagni</div>
-        <div class="property-description">Bellissima villa nel verde adatta ad una famiglia numerosa grazie ai suoi spazi generosi e alla posizione collinare tranquilla e soleggiata.
-
-La vil...</div>
-        <div class="property-buttons">
-          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=4hEUv1xl7mHBxulBcTaX74rk2CSCJxol68baaSR6Pyw=" target="_blank">
-            Vedi Dettagli
-          </a>
-          <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
-            Contattaci
-          </a>
-        </div>
+      <div class="stat-item">
+        <span class="stat-number" id="visibleCount">0</span>
+        <span>Risultati filtrati</span>
       </div>
     </div>
-  
 
-    <div class="property-card" 
-         data-contratto="vendita"
-         data-categoria="appartamento"
-         data-categoria-codici="32"
-         data-caratteristiche="vista,attico,box"
-         data-comune="lugano"
-         data-regione="ticino"
-         data-provincia="tidistretto di lugano"
-         data-prezzo="550000"
-         data-mq="80"
-         data-vani="2,5"
-         data-camere="0"
-         data-bagni="2">
-      <div class="property-image">
-        <img src="https://img.miogest.com/26948/0/imm_271-20250318133455-1280-.jpg" alt="Attico luminoso con vista aperta  " onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Attico luminoso con vista aperta  </div>
-        <div class="property-location">Lugano, Ticino</div>
-        <div class="property-price">CHF 550’000</div>
-        <div class="property-specs">80 m² • 2,5 vani • 0 camere • 2 bagni</div>
-        <div class="property-description">In una tranquilla e pianeggiante zona residenziale di Lugano, a pochi passi dal lago e dal vivace centro città, ben collegata con i mezzi pubblici, pr...</div>
-        <div class="property-buttons">
-          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=+3G7DlmOP3AgpsczD8kA/aaKGmzcRT4saLoyqPM9MKQ=" target="_blank">
-            Vedi Dettagli
-          </a>
-          <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
-            Contattaci
-          </a>
-        </div>
-      </div>
+    <!-- Grid immobili -->
+    <div class="loading" id="loading">
+      Caricamento immobili in corso...
     </div>
-  
 
-    <div class="property-card" 
-         data-contratto="vendita"
-         data-categoria="casa"
-         data-categoria-codici="28"
-         data-caratteristiche="vista,giardino,box"
-         data-comune="riva san vitale"
-         data-regione="ticino"
-         data-provincia="tidistretto di mendrisio"
-         data-prezzo="2500000"
-         data-mq="500"
-         data-vani="7,5"
-         data-camere="4"
-         data-bagni="4">
-      <div class="property-image">
-        <img src="https://img.miogest.com/26948/0/imm_212-20250418151513-1280-.jpg" alt="Un’oasi di charme con vista mozzafiato" onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Un’oasi di charme con vista mozzafiato</div>
-        <div class="property-location">Riva San Vitale, Ticino</div>
-        <div class="property-price">CHF 2’500’000</div>
-        <div class="property-specs">500 m² • 7,5 vani • 4 camere • 4 bagni</div>
-        <div class="property-description">In posizione dominante, con una vista spettacolare su Riva San Vitale, il lago e le montagne circostanti, questa affascinante proprietà rappresenta un...</div>
-        <div class="property-buttons">
-          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=v6VQbyEewCpycTSKYJ53hQVWW2+laY7QK1PA85aeRFM=" target="_blank">
-            Vedi Dettagli
-          </a>
-          <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
-            Contattaci
-          </a>
-        </div>
-      </div>
+    <div class="properties-grid" id="propertiesGrid" style="display: none;">
+      <!-- Le card degli immobili verranno inserite qui via JavaScript -->
     </div>
-  
 
-    <div class="property-card" 
-         data-contratto="vendita"
-         data-categoria="casa"
-         data-categoria-codici="28"
-         data-caratteristiche="vista,giardino,terrazzo,box"
-         data-comune="canobbio"
-         data-regione="ticino"
-         data-provincia="tidistretto di lugano"
-         data-prezzo="2890000"
-         data-mq="171"
-         data-vani="4,5"
-         data-camere="3"
-         data-bagni="2">
-      <div class="property-image">
-        <img src="https://img.miogest.com/26948/0/imm_66-20250312135406-1280-.jpg" alt="Eleganza e Vista Panoramica: Due ville uniche" onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
+    <div class="no-results" id="noResults" style="display: none;">
+      <div class="no-results-icon">🏠</div>
+      <div style="font-size: 20px; margin-bottom: 10px; color: #6E5C4F; font-weight: 600;">
+        Nessun immobile trovato
       </div>
-      <div class="property-details">
-        <div class="property-title">Eleganza e Vista Panoramica: Due ville uniche</div>
-        <div class="property-location">Canobbio, Ticino</div>
-        <div class="property-price">CHF 2’890’000</div>
-        <div class="property-specs">171 m² • 4,5 vani • 3 camere • 2 bagni</div>
-        <div class="property-description">Nel comune di Canobbio, in una posizione residenziale privilegiata, nasceranno due ville dal design moderno e raffinato, progettate per valorizzare la...</div>
-        <div class="property-buttons">
-          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=U1IsN+5sU3/OVS8sUOh9Wi64zzV1rs3zd3ttvPblkyY=" target="_blank">
-            Vedi Dettagli
-          </a>
-          <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
-            Contattaci
-          </a>
-        </div>
-      </div>
+      <div>Prova a modificare i filtri di ricerca</div>
     </div>
-  
+  </div>
 
-    <div class="property-card" 
-         data-contratto="vendita"
-         data-categoria="casa"
-         data-categoria-codici="1"
-         data-caratteristiche="giardino,box"
-         data-comune="caslano"
-         data-regione="ticino"
-         data-provincia="tidistretto di lugano"
-         data-prezzo="350000"
-         data-mq="63"
-         data-vani="2,5"
-         data-camere="1"
-         data-bagni="1">
-      <div class="property-image">
-        <img src="https://img.miogest.com/26948/0/imm_281-20250415153416-1280-.jpeg" alt="Ihre perfekte Ferienoase " onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Ihre perfekte Ferienoase </div>
-        <div class="property-location">Caslano, Ticino</div>
-        <div class="property-price">CHF 350’000</div>
-        <div class="property-specs">63 m² • 2,5 vani • 1 camere • 1 bagni</div>
-        <div class="property-description">Suchen Sie eine Ferienwohnung mit 2.5 Zimmern, die Komfort, Entspannung und eine erstklassige Lage vereint? Dann ist diese Immobilie genau das Richtig...</div>
-        <div class="property-buttons">
-          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=F4ybDsB2BFt9A2wYvEA6XgIMdlNu09Yg1OQTAcIclds=" target="_blank">
-            Vedi Dettagli
-          </a>
-          <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
-            Contattaci
-          </a>
-        </div>
-      </div>
-    </div>
-  
-
-    <div class="property-card" 
-         data-contratto="vendita"
-         data-categoria="appartamento"
-         data-categoria-codici="32"
-         data-caratteristiche="vista,attico,terrazzo,box"
-         data-comune="pregassona"
-         data-regione="ticino"
-         data-provincia="tidistretto di lugano"
-         data-prezzo="1794000"
-         data-mq="209"
-         data-vani="4,5"
-         data-camere="3"
-         data-bagni="3">
-      <div class="property-image">
-        <img src="https://img.miogest.com/26948/0/imm_280-20250416133142-1280-.jpg" alt="Elegante attico con Vista Lago" onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Elegante attico con Vista Lago</div>
-        <div class="property-location">Pregassona, Ticino</div>
-        <div class="property-price">CHF 1’794’000</div>
-        <div class="property-specs">209 m² • 4,5 vani • 3 camere • 3 bagni</div>
-        <div class="property-description">In posizione collinare sopra Lugano, proponiamo in vendita un elegante attico con vista panoramica mozzafiato sulla città e sul lago. Situato in una m...</div>
-        <div class="property-buttons">
-          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=jC+pLRFJbMX/oZ6FJisGjUYQKQEIb1JIxDlbi64okl8=" target="_blank">
-            Vedi Dettagli
-          </a>
-          <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
-            Contattaci
-          </a>
-        </div>
-      </div>
-    </div>
-  
-
-    <div class="property-card" 
-         data-contratto="vendita"
-         data-categoria="casa"
-         data-categoria-codici="1"
-         data-caratteristiche="vista,giardino,terrazzo,box"
-         data-comune="pregassona"
-         data-regione="ticino"
-         data-provincia="tidistretto di lugano"
-         data-prezzo="632500"
-         data-mq="73"
-         data-vani="2,5"
-         data-camere="1"
-         data-bagni="1">
-      <div class="property-image">
-        <img src="https://img.miogest.com/26948/0/imm_282-20250416121709-1280-.jpg" alt="Eleganza Contemporanea con Giardino" onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Eleganza Contemporanea con Giardino</div>
-        <div class="property-location">Pregassona, Ticino</div>
-        <div class="property-price">CHF 632’500</div>
-        <div class="property-specs">73 m² • 2,5 vani • 1 camere • 1 bagni</div>
-        <div class="property-description">In posizione collinare sopra Lugano, proponiamo in vendita uno splendido appartamento di 2,5 locali con giardino privato. Situato in una moderna resid...</div>
-        <div class="property-buttons">
-          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=tr8YFyCBnGSkAY+4ofUqXzNDO5Tz/VFsidMjXy+dpSE=" target="_blank">
-            Vedi Dettagli
-          </a>
-          <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
-            Contattaci
-          </a>
-        </div>
-      </div>
-    </div>
-  
-
-    <div class="property-card" 
-         data-contratto="affitto"
-         data-categoria="casa"
-         data-categoria-codici="37"
-         data-caratteristiche=""
-         data-comune="lugano"
-         data-regione="ticino"
-         data-provincia="tidistretto di lugano"
-         data-prezzo="1000"
-         data-mq="12"
-         data-vani="1"
-         data-camere="0"
-         data-bagni="0">
-      <div class="property-image">
-        <img src="https://img.miogest.com/26948/0/imm_334-20250603153223-1280-.jpg" alt="Elegante ufficio in villa storica " onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Elegante ufficio in villa storica </div>
-        <div class="property-location">Lugano, Ticino</div>
-        <div class="property-price">CHF 1000</div>
-        <div class="property-specs">12 m² • 1 vani • 0 camere • 0 bagni</div>
-        <div class="property-description">A pochi passi dal centro e dal lago di Lugano, offriamo in locazione un elegante ufficio di un locale situato al piano terra di una villa storica.
-
-...</div>
-        <div class="property-buttons">
-          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=q/8s2NSMMqRsAlJpR0fcnzFz2jDfrVCDZ5m7USK9nWQ=" target="_blank">
-            Vedi Dettagli
-          </a>
-          <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
-            Contattaci
-          </a>
-        </div>
-      </div>
-    </div>
-  
-
-    <div class="property-card" 
-         data-contratto="vendita"
-         data-categoria="casa"
-         data-categoria-codici="1"
-         data-caratteristiche="box"
-         data-comune="lugano"
-         data-regione="ticino"
-         data-provincia="tidistretto di lugano"
-         data-prezzo="395000"
-         data-mq="45"
-         data-vani="2,5"
-         data-camere="0"
-         data-bagni="1">
-      <div class="property-image">
-        <img src="https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile" alt="Accogliente 2.5 locali a due passi dal centro" onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
-      </div>
-      <div class="property-details">
-        <div class="property-title">Accogliente 2.5 locali a due passi dal centro</div>
-        <div class="property-location">Lugano, Ticino</div>
-        <div class="property-price">CHF 395’000</div>
-        <div class="property-specs">45 m² • 2,5 vani • 0 camere • 1 bagni</div>
-        <div class="property-description">A pochi passi dal centro e dal lago, in posizione comoda e ben servita, proponiamo in vendita un luminoso appartamento di 2.5 locali, completamente ri...</div>
-        <div class="property-buttons">
-          <a class="view-button" href="https://annuncio.miogest.com/?annuncio=+3mSh8yxosBVGpVWihYi+2xMMcJGUAVEwNR6/Od6KMw=" target="_blank">
-            Vedi Dettagli
-          </a>
-          <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
-            Contattaci
-          </a>
-        </div>
-      </div>
-    </div>
-  
-</div>
-
-<script>
-// NUOVA FUNZIONE: Calcola località vicine in base al raggio
-function getLocalitaVicine(località, raggio) {
-  const mappingDistanze = {
-    'lugano': {
-      5: ['pregassona', 'canobbio', 'bosco luganese'],
-      10: ['pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano'],
-      20: ['pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale'],
-      50: ['pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale', 'mendrisio', 'chiasso', 'locarno', 'bellinzona']
-    },
-    'caslano': {
-      5: ['lugano'],
-      10: ['lugano', 'pregassona', 'canobbio'],
-      20: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'torricella'],
-      50: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'torricella', 'riva san vitale']
-    },
-    'pregassona': {
-      5: ['lugano', 'canobbio'],
-      10: ['lugano', 'canobbio', 'bosco luganese'],
-      20: ['lugano', 'canobbio', 'bosco luganese', 'torricella', 'caslano'],
-      50: ['lugano', 'canobbio', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale']
-    },
-    'canobbio': {
-      5: ['lugano', 'pregassona'],
-      10: ['lugano', 'pregassona', 'bosco luganese'],
-      20: ['lugano', 'pregassona', 'bosco luganese', 'torricella', 'caslano'],
-      50: ['lugano', 'pregassona', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale']
-    },
-    'bosco luganese': {
-      5: ['lugano'],
-      10: ['lugano', 'pregassona', 'canobbio'],
-      20: ['lugano', 'pregassona', 'canobbio', 'torricella', 'caslano'],
-      50: ['lugano', 'pregassona', 'canobbio', 'torricella', 'caslano', 'riva san vitale']
-    },
-    'torricella': {
-      5: [],
-      10: ['lugano', 'pregassona'],
-      20: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'caslano'],
-      50: ['lugano', 'pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano', 'riva san vitale']
-    },
-    'riva san vitale': {
-      5: [],
-      10: ['mendrisio'],
-      20: ['mendrisio', 'lugano'],
-      50: ['mendrisio', 'lugano', 'pregassona', 'canobbio', 'bosco luganese', 'torricella', 'caslano']
-    }
-  };
-
-  const localitàNorm = località.toLowerCase().trim();
-  
-  // Trova il raggio più vicino disponibile
-  const raggiDisponibili = [5, 10, 20, 50];
-  const raggioEffettivo = raggiDisponibili.find(r => r >= raggio) || 50;
-  
-  if (mappingDistanze[localitàNorm] && mappingDistanze[localitàNorm][raggioEffettivo]) {
-    console.log(`🗺️ ${località} raggio ${raggio}km → trovate: ${mappingDistanze[localitàNorm][raggioEffettivo].join(', ')}`);
-    return mappingDistanze[localitàNorm][raggioEffettivo];
+  <script>
+    // Dati immobili generati dal build script
+    const IMMOBILI_DATA = [
+  {
+    "id": 1,
+    "titolo": "Moderna casa unifamiliare con portico",
+    "comune": "Bosco Luganese",
+    "regione": "Ticino",
+    "prezzo": 1340000,
+    "valuta": "CHF",
+    "mq": 165,
+    "vani": 3,
+    "camere": 2,
+    "bagni": 2,
+    "contratto": "vendita",
+    "categoria": "casa",
+    "caratteristiche": [
+      "vista",
+      "giardino",
+      "box"
+    ],
+    "foto": "https://img.miogest.com/26948/0/imm_304-20250424101315-1280-.jpeg",
+    "descrizione": "Splendida villa unifamiliare con vista panoramica sulle montagne, situata in una zona tranquilla e ben servita.\r\n\r\nQuesta proprietà, completamente ris...",
+    "link": "https://annuncio.miogest.com/?annuncio=6GD5OAEwx04B46TV3lTeOj5nKScFIKeI/QjlNlfkWwc="
+  },
+  {
+    "id": 2,
+    "titolo": "Bella villa nel verde ",
+    "comune": "Torricella",
+    "regione": "Ticino",
+    "prezzo": 1790000,
+    "valuta": "CHF",
+    "mq": 260,
+    "vani": 5,
+    "camere": 4,
+    "bagni": 4,
+    "contratto": "vendita",
+    "categoria": "casa",
+    "caratteristiche": [
+      "vista",
+      "giardino",
+      "terrazzo",
+      "box"
+    ],
+    "foto": "https://img.miogest.com/26948/0/imm_261-20250305131204-1280-.jpeg",
+    "descrizione": "Bellissima villa nel verde adatta ad una famiglia numerosa grazie ai suoi spazi generosi e alla posizione collinare tranquilla e soleggiata.\r\n\r\nLa vil...",
+    "link": "https://annuncio.miogest.com/?annuncio=4hEUv1xl7mHBxulBcTaX74rk2CSCJxol68baaSR6Pyw="
+  },
+  {
+    "id": 3,
+    "titolo": "Attico luminoso con vista aperta  ",
+    "comune": "Lugano",
+    "regione": "Ticino",
+    "prezzo": 550000,
+    "valuta": "CHF",
+    "mq": 80,
+    "vani": 2,
+    "camere": 0,
+    "bagni": 2,
+    "contratto": "vendita",
+    "categoria": "appartamento",
+    "caratteristiche": [
+      "vista",
+      "attico",
+      "box"
+    ],
+    "foto": "https://img.miogest.com/26948/0/imm_271-20250318133455-1280-.jpg",
+    "descrizione": "In una tranquilla e pianeggiante zona residenziale di Lugano, a pochi passi dal lago e dal vivace centro città, ben collegata con i mezzi pubblici, pr...",
+    "link": "https://annuncio.miogest.com/?annuncio=+3G7DlmOP3AgpsczD8kA/aaKGmzcRT4saLoyqPM9MKQ="
+  },
+  {
+    "id": 4,
+    "titolo": "Un’oasi di charme con vista mozzafiato",
+    "comune": "Riva San Vitale",
+    "regione": "Ticino",
+    "prezzo": 2500000,
+    "valuta": "CHF",
+    "mq": 500,
+    "vani": 7,
+    "camere": 4,
+    "bagni": 4,
+    "contratto": "vendita",
+    "categoria": "casa",
+    "caratteristiche": [
+      "vista",
+      "giardino",
+      "box"
+    ],
+    "foto": "https://img.miogest.com/26948/0/imm_212-20250418151513-1280-.jpg",
+    "descrizione": "In posizione dominante, con una vista spettacolare su Riva San Vitale, il lago e le montagne circostanti, questa affascinante proprietà rappresenta un...",
+    "link": "https://annuncio.miogest.com/?annuncio=v6VQbyEewCpycTSKYJ53hQVWW2+laY7QK1PA85aeRFM="
+  },
+  {
+    "id": 5,
+    "titolo": "Eleganza e Vista Panoramica: Due ville uniche",
+    "comune": "Canobbio",
+    "regione": "Ticino",
+    "prezzo": 2890000,
+    "valuta": "CHF",
+    "mq": 171,
+    "vani": 4,
+    "camere": 3,
+    "bagni": 2,
+    "contratto": "vendita",
+    "categoria": "casa",
+    "caratteristiche": [
+      "vista",
+      "giardino",
+      "terrazzo",
+      "box"
+    ],
+    "foto": "https://img.miogest.com/26948/0/imm_66-20250312135406-1280-.jpg",
+    "descrizione": "Nel comune di Canobbio, in una posizione residenziale privilegiata, nasceranno due ville dal design moderno e raffinato, progettate per valorizzare la...",
+    "link": "https://annuncio.miogest.com/?annuncio=U1IsN+5sU3/OVS8sUOh9Wi64zzV1rs3zd3ttvPblkyY="
+  },
+  {
+    "id": 6,
+    "titolo": "Ihre perfekte Ferienoase ",
+    "comune": "Caslano",
+    "regione": "Ticino",
+    "prezzo": 350000,
+    "valuta": "CHF",
+    "mq": 63,
+    "vani": 2,
+    "camere": 1,
+    "bagni": 1,
+    "contratto": "vendita",
+    "categoria": "casa",
+    "caratteristiche": [
+      "giardino",
+      "box"
+    ],
+    "foto": "https://img.miogest.com/26948/0/imm_281-20250415153416-1280-.jpeg",
+    "descrizione": "Suchen Sie eine Ferienwohnung mit 2.5 Zimmern, die Komfort, Entspannung und eine erstklassige Lage vereint? Dann ist diese Immobilie genau das Richtig...",
+    "link": "https://annuncio.miogest.com/?annuncio=F4ybDsB2BFt9A2wYvEA6XgIMdlNu09Yg1OQTAcIclds="
+  },
+  {
+    "id": 7,
+    "titolo": "Elegante attico con Vista Lago",
+    "comune": "Pregassona",
+    "regione": "Ticino",
+    "prezzo": 1794000,
+    "valuta": "CHF",
+    "mq": 209,
+    "vani": 4,
+    "camere": 3,
+    "bagni": 3,
+    "contratto": "vendita",
+    "categoria": "appartamento",
+    "caratteristiche": [
+      "vista",
+      "attico",
+      "terrazzo",
+      "box"
+    ],
+    "foto": "https://img.miogest.com/26948/0/imm_280-20250416133142-1280-.jpg",
+    "descrizione": "In posizione collinare sopra Lugano, proponiamo in vendita un elegante attico con vista panoramica mozzafiato sulla città e sul lago. Situato in una m...",
+    "link": "https://annuncio.miogest.com/?annuncio=jC+pLRFJbMX/oZ6FJisGjUYQKQEIb1JIxDlbi64okl8="
+  },
+  {
+    "id": 8,
+    "titolo": "Eleganza Contemporanea con Giardino",
+    "comune": "Pregassona",
+    "regione": "Ticino",
+    "prezzo": 632500,
+    "valuta": "CHF",
+    "mq": 73,
+    "vani": 2,
+    "camere": 1,
+    "bagni": 1,
+    "contratto": "vendita",
+    "categoria": "casa",
+    "caratteristiche": [
+      "vista",
+      "giardino",
+      "terrazzo",
+      "box"
+    ],
+    "foto": "https://img.miogest.com/26948/0/imm_282-20250416121709-1280-.jpg",
+    "descrizione": "In posizione collinare sopra Lugano, proponiamo in vendita uno splendido appartamento di 2,5 locali con giardino privato. Situato in una moderna resid...",
+    "link": "https://annuncio.miogest.com/?annuncio=tr8YFyCBnGSkAY+4ofUqXzNDO5Tz/VFsidMjXy+dpSE="
+  },
+  {
+    "id": 9,
+    "titolo": "Elegante ufficio in villa storica ",
+    "comune": "Lugano",
+    "regione": "Ticino",
+    "prezzo": 1000,
+    "valuta": "CHF",
+    "mq": 12,
+    "vani": 1,
+    "camere": 0,
+    "bagni": 0,
+    "contratto": "affitto",
+    "categoria": "casa",
+    "caratteristiche": [],
+    "foto": "https://img.miogest.com/26948/0/imm_334-20250603153223-1280-.jpg",
+    "descrizione": "A pochi passi dal centro e dal lago di Lugano, offriamo in locazione un elegante ufficio di un locale situato al piano terra di una villa storica.\r\n\r\n...",
+    "link": "https://annuncio.miogest.com/?annuncio=q/8s2NSMMqRsAlJpR0fcnzFz2jDfrVCDZ5m7USK9nWQ="
+  },
+  {
+    "id": 10,
+    "titolo": "Accogliente 2.5 locali a due passi dal centro",
+    "comune": "Lugano",
+    "regione": "Ticino",
+    "prezzo": 395000,
+    "valuta": "CHF",
+    "mq": 45,
+    "vani": 2,
+    "camere": 0,
+    "bagni": 1,
+    "contratto": "vendita",
+    "categoria": "casa",
+    "caratteristiche": [
+      "box"
+    ],
+    "foto": "https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile",
+    "descrizione": "A pochi passi dal centro e dal lago, in posizione comoda e ben servita, proponiamo in vendita un luminoso appartamento di 2.5 locali, completamente ri...",
+    "link": "https://annuncio.miogest.com/?annuncio=+3mSh8yxosBVGpVWihYi+2xMMcJGUAVEwNR6/Od6KMw="
   }
-  
-  console.log(`🗺️ ${località} raggio ${raggio}km → nessuna località mappata`);
-  return [];
-}
+];
 
-function estraiLocalita() {
-  const locationSet = new Set();
-  document.querySelectorAll('.property-card').forEach(card => {
-    const comune = card.dataset.comune;
-    const regione = card.dataset.regione;
-    if (comune) locationSet.add(comune.charAt(0).toUpperCase() + comune.slice(1));
-    if (regione && regione !== comune) locationSet.add(regione.charAt(0).toUpperCase() + regione.slice(1));
-  });
-  return Array.from(locationSet).sort();
-}
+    let filteredData = [...IMMOBILI_DATA];
+    let allLocations = [];
 
-function filtraAnnunci(filtri) {
-  let visibili = 0;
-  console.log('🔍 Filtri applicati:', filtri);
-  
-  // DEBUG SPECIFICO per località
-  if (filtri.localita && filtri.localita.trim()) {
-    console.log(`🗺️ === RICERCA LOCALITÀ: "${filtri.localita}" (raggio: ${filtri.distance || 0}km) ===`);
-  }
-  
-  document.querySelectorAll('.property-card').forEach((card, index) => {
-    let visibile = true;
+    // Inizializzazione
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('🚀 Inizializzo sito Netlify...');
+      
+      try {
+        // Estrai tutte le località uniche
+        allLocations = [...new Set(IMMOBILI_DATA.map(item => item.comune))].sort();
+        
+        // Popola il dropdown delle località
+        const locationSelect = document.getElementById('location');
+        allLocations.forEach(location => {
+          const option = document.createElement('option');
+          option.value = location.toLowerCase();
+          option.textContent = location;
+          locationSelect.appendChild(option);
+        });
 
-    // Filtro per tipo contratto
-    if (filtri.contract && filtri.contract !== card.dataset.contratto) {
-      visibile = false;
+        // Mostra tutti gli immobili inizialmente
+        renderProperties();
+        updateStats();
+        
+        // Nascondi il loading
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('propertiesGrid').style.display = 'grid';
+        document.getElementById('stats').style.display = 'flex';
+        
+        console.log(`✅ Sito caricato con ${IMMOBILI_DATA.length} immobili`);
+      } catch (error) {
+        console.error('❌ Errore inizializzazione:', error);
+        document.getElementById('loading').innerHTML = 'Errore nel caricamento degli immobili';
+      }
+    });
+
+    // Funzione per applicare i filtri
+    function applyFilters() {
+      try {
+        const location = document.getElementById('location').value;
+        const contract = document.getElementById('contract').value;
+        const type = document.getElementById('type').value;
+        const priceMax = document.getElementById('priceMax').value;
+        const rooms = document.getElementById('rooms').value;
+
+        console.log('🔍 Applicando filtri:', { location, contract, type, priceMax, rooms });
+
+        filteredData = IMMOBILI_DATA.filter(property => {
+          // Filtro località
+          if (location && property.comune.toLowerCase() !== location) {
+            return false;
+          }
+
+          // Filtro contratto
+          if (contract && property.contratto !== contract) {
+            return false;
+          }
+
+          // Filtro tipologia
+          if (type && property.categoria !== type) {
+            return false;
+          }
+
+          // Filtro prezzo massimo
+          if (priceMax && property.prezzo > parseInt(priceMax)) {
+            return false;
+          }
+
+          // Filtro numero vani
+          if (rooms && property.vani < parseFloat(rooms)) {
+            return false;
+          }
+
+          return true;
+        });
+
+        console.log(`✅ Trovati ${filteredData.length} immobili corrispondenti ai filtri`);
+        
+        renderProperties();
+        updateStats();
+      } catch (error) {
+        console.error('❌ Errore applicazione filtri:', error);
+      }
     }
 
-    // Filtro per località con raggio - LOGICA MIGLIORATA + DEBUG
-    if (filtri.localita) {
-      const searchLocation = filtri.localita.toLowerCase().trim();
-      const comune = (card.dataset.comune || '').toLowerCase().trim();
-      const regione = (card.dataset.regione || '').toLowerCase().trim();
-      const provincia = (card.dataset.provincia || '').toLowerCase().trim();
-      const titolo = card.querySelector('.property-title')?.textContent || '';
-      
-      let locationMatch = false;
-      let matchType = '';
-      
-      // MATCH ESATTO - priorità massima
-      if (comune === searchLocation || regione === searchLocation) {
-        locationMatch = true;
-        matchType = 'esatto';
+    // Funzione per resettare i filtri
+    function resetFilters() {
+      try {
+        document.getElementById('location').value = '';
+        document.getElementById('contract').value = '';
+        document.getElementById('type').value = '';
+        document.getElementById('priceMax').value = '';
+        document.getElementById('rooms').value = '';
+        
+        filteredData = [...IMMOBILI_DATA];
+        renderProperties();
+        updateStats();
+        
+        console.log('🔄 Filtri resettati');
+      } catch (error) {
+        console.error('❌ Errore reset filtri:', error);
       }
-      // MATCH STARTSWITH - seconda priorità (solo per nomi lunghi)
-      else if (searchLocation.length >= 5 && (comune.startsWith(searchLocation) || regione.startsWith(searchLocation))) {
-        locationMatch = true;
-        matchType = 'prefisso';
-      }
-      
-      // RAGGIO DI RICERCA - implementazione con mapping località
-      if (!locationMatch && filtri.distance && filtri.distance > 0) {
-        const vicinanze = getLocalitaVicine(searchLocation, filtri.distance);
-        if (vicinanze.includes(comune) || vicinanze.includes(regione)) {
-          locationMatch = true;
-          matchType = `raggio ${filtri.distance}km`;
+    }
+
+    // Funzione per renderizzare le proprietà
+    function renderProperties() {
+      try {
+        const grid = document.getElementById('propertiesGrid');
+        const noResults = document.getElementById('noResults');
+
+        if (filteredData.length === 0) {
+          grid.style.display = 'none';
+          noResults.style.display = 'block';
+          return;
         }
-      }
-      
-      // DEBUG per ogni card testata
-      console.log(`🏠 "${titolo.substring(0, 30)}..." → ${comune} | Match: ${locationMatch ? '✅ ' + matchType : '❌'}`);
-      
-      if (!locationMatch) visibile = false;
-    }
 
-    // Filtro per tipologia usando codici categoria
-    if (filtri.categoryCodes) {
-      const codiciRichiesti = filtri.categoryCodes.split(',').filter(c => c.trim());
-      const codiciCard = (card.dataset.categoriaCodici || '').split(',');
-      
-      if (codiciRichiesti.length > 0) {
-        const hasMatch = codiciRichiesti.some(codice => 
-          codiciCard.includes(codice.trim())
-        );
-        if (!hasMatch) visibile = false;
+        grid.style.display = 'grid';
+        noResults.style.display = 'none';
+
+        grid.innerHTML = filteredData.map(property => createPropertyCard(property)).join('');
+      } catch (error) {
+        console.error('❌ Errore rendering proprietà:', error);
+        document.getElementById('propertiesGrid').innerHTML = '<div>Errore nel caricamento delle proprietà</div>';
       }
     }
 
-    // Filtro per tipologia legacy (fallback)
-    if (filtri.tipo && !filtri.categoryCodes) {
-      const tipi = filtri.tipo.split(',').filter(t => t.trim());
-      const categoria = card.dataset.categoria || '';
-      if (tipi.length > 0 && !tipi.some(tipo => categoria.includes(tipo.trim()))) {
-        visibile = false;
+    // Funzione per creare una card proprietà
+    function createPropertyCard(property) {
+      try {
+        const prezzoFormattato = property.prezzo > 0 
+          ? `${property.valuta} ${property.prezzo.toLocaleString('it-CH')}` 
+          : 'Prezzo su richiesta';
+
+        const caratteristicheIcons = {
+          vista: '🏔️ Vista',
+          giardino: '🌿 Giardino',
+          terrazzo: '🏛️ Terrazzo',
+          attico: '🏢 Attico',
+          box: '🚗 Box'
+        };
+
+        const featureTags = property.caratteristiche
+          .map(feat => `<span class="feature-tag">${caratteristicheIcons[feat] || feat}</span>`)
+          .join('');
+
+        return `
+          <div class="property-card">
+            <div class="property-image">
+              <img src="${property.foto}" alt="${property.titolo}" 
+                   onerror="this.src='https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile'">
+              <div class="property-badge">${property.contratto === 'vendita' ? 'Vendita' : 'Affitto'}</div>
+            </div>
+            <div class="property-details">
+              <div class="property-title">${property.titolo}</div>
+              <div class="property-location">${property.comune}${property.regione ? ', ' + property.regione : ''}</div>
+              <div class="property-price">${prezzoFormattato}</div>
+              
+              <div class="property-specs">
+                <div class="spec-item">📐 ${property.mq} m²</div>
+                <div class="spec-item">🏠 ${property.vani} vani</div>
+                ${property.camere > 0 ? `<div class="spec-item">🛏️ ${property.camere}</div>` : ''}
+                ${property.bagni > 0 ? `<div class="spec-item">🚿 ${property.bagni}</div>` : ''}
+              </div>
+              
+              ${featureTags ? `<div class="property-features">${featureTags}</div>` : ''}
+              
+              <div class="property-description">${property.descrizione}</div>
+              
+              <div class="property-buttons">
+                <a class="view-button" href="${property.link}" target="_blank">
+                  Vedi Dettagli
+                </a>
+                <a class="contact-button" href="https://porpoise-helicon-zwed.squarespace.com/proprieta#block-dd726c7158bbd7fc543f" target="_blank">
+                  Contattaci
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+      } catch (error) {
+        console.error('❌ Errore creazione card:', error);
+        return '<div class="property-card">Errore nel caricamento immobile</div>';
       }
     }
 
-    // Filtro per caratteristiche
-    if (filtri.caratteristiche && filtri.caratteristiche.trim()) {
-      const caratteristicheRichieste = filtri.caratteristiche.split(',').filter(c => c.trim());
-      const caratteristicheCard = (card.dataset.caratteristiche || '').split(',').filter(c => c.trim());
-      
-      if (caratteristicheRichieste.length > 0 && 
-          !caratteristicheRichieste.every(char => caratteristicheCard.includes(char.trim()))) {
-        visibile = false;
+    // Funzione per aggiornare le statistiche
+    function updateStats() {
+      try {
+        document.getElementById('totalCount').textContent = IMMOBILI_DATA.length;
+        document.getElementById('visibleCount').textContent = filteredData.length;
+      } catch (error) {
+        console.error('❌ Errore aggiornamento statistiche:', error);
       }
     }
 
-    // Filtro per prezzo
-    const prezzo = parseInt(card.dataset.prezzo) || 0;
-    if (filtri.budgetMin && prezzo > 0 && prezzo < filtri.budgetMin) visibile = false;
-    if (filtri.budgetMax && prezzo > 0 && prezzo > filtri.budgetMax) visibile = false;
-
-    // Filtro per superficie
-    const mq = parseInt(card.dataset.mq) || 0;
-    if (filtri.superficieMin && mq > 0 && mq < filtri.superficieMin) visibile = false;
-    if (filtri.superficieMax && mq > 0 && mq > filtri.superficieMax) visibile = false;
-
-    // Filtro per vani
-    const vani = parseFloat(card.dataset.vani) || 0;
-    if (filtri.vaniMin && vani > 0 && vani < filtri.vaniMin) visibile = false;
-    if (filtri.vaniMax && vani > 0 && vani > filtri.vaniMax) visibile = false;
-
-    // Applica la visibilità
-    card.style.display = visibile ? 'flex' : 'none';
-    if (visibile) visibili++;
-  });
-
-  console.log(`✅ Trovati ${visibili} immobili corrispondenti ai filtri`);
-  
-  // *** RIMOSSO: comunicazione automatica per evitare loop ***
-  // La comunicazione avviene solo su richiesta esplicita
-  
-  showNoResultsMessage(visibili);
-  
-  // Restituisce il numero per uso interno
-  return visibili;
-}
-
-function showNoResultsMessage(count) {
-  let existingMessage = document.querySelector('.no-results');
-  
-  if (count === 0) {
-    if (!existingMessage) {
-      const message = document.createElement('div');
-      message.className = 'no-results';
-      message.innerHTML = `
-        <div style="font-size: 48px; margin-bottom: 20px;">🏠</div>
-        <div style="font-size: 20px; margin-bottom: 10px; color: #6E5C4F; font-weight: 600;">Nessun immobile trovato</div>
-        <div style="color: #777;">Prova a modificare i filtri di ricerca</div>
-      `;
-      document.querySelector('.properties-grid').appendChild(message);
-    }
-  } else {
-    if (existingMessage) {
-      existingMessage.remove();
-    }
-  }
-}
-
-// *** SISTEMA ANTI-LOOP COMPLETAMENTE RINNOVATO ***
-let isInitialized = false;
-let lastMessageId = null;
-let processingMessage = false;
-
-function inviaRispostaSicura(data, targetWindow = window.parent) {
-  // Evita invii multipli della stessa risposta
-  const messageId = JSON.stringify(data);
-  if (lastMessageId === messageId) {
-    console.log('🛑 Risposta già inviata, evito duplicato');
-    return;
-  }
-  
-  if (targetWindow !== window) {
-    try {
-      targetWindow.postMessage(data, "*");
-      lastMessageId = messageId;
-      console.log('📤 Risposta inviata:', data);
-      
-      // Reset ID dopo 5 secondi per permettere nuove richieste legittime
-      setTimeout(() => {
-        if (lastMessageId === messageId) {
-          lastMessageId = null;
-        }
-      }, 5000);
-    } catch (e) {
-      console.log('⚠️ Errore invio risposta:', e.message);
-    }
-  }
-}
-
-window.addEventListener('message', function (event) {
-  // Evita elaborazione multipla simultanea
-  if (processingMessage) {
-    console.log('🛑 Messaggio ignorato: elaborazione in corso');
-    return;
-  }
-  
-  processingMessage = true;
-  
-  try {
-    const data = event.data;
-    console.log('📨 Messaggio ricevuto:', data);
-
-    // Gestisce richiesta località
-    if (data?.richiestaLocalita) {
-      const localita = estraiLocalita();
-      const totale = document.querySelectorAll('.property-card').length;
-      console.log(`📍 Località disponibili: ${localita.length}, Totale immobili: ${totale}`);
-
-      inviaRispostaSicura({
-        localitaDisponibili: localita,
-        annunciTrovati: totale,
-        tipo: 'risposta-localita'
-      }, event.source);
-      return;
-    }
-
-    // Gestisce filtri solo se contengono parametri validi
-    if (data && typeof data === 'object' && 
-        (data.localita !== undefined || data.tipo || data.caratteristiche || 
-         data.budgetMin || data.budgetMax || data.superficieMin || data.superficieMax ||
-         data.vaniMin || data.vaniMax || data.distance !== undefined || data.categoryCodes)) {
-      
-      const risultati = filtraAnnunci(data);
-      
-      // Invia risposta SOLO se richiesta esplicitamente
-      if (data.richiestaRisposta) {
-        inviaRispostaSicura({
-          annunciTrovati: risultati,
-          tipo: 'risposta-filtri'
-        }, event.source);
+    // Gestione errori immagini
+    document.addEventListener('error', function(e) {
+      if (e.target.tagName === 'IMG') {
+        e.target.src = 'https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile';
       }
-    }
-    
-  } finally {
-    // Rilascia il lock dopo breve delay
-    setTimeout(() => {
-      processingMessage = false;
-    }, 100);
-  }
-});
+    }, true);
 
-// *** INIZIALIZZAZIONE SEMPLIFICATA ***
-document.addEventListener('DOMContentLoaded', function() {
-  if (isInitialized) {
-    console.log('⚠️ Già inizializzato, evito doppia inizializzazione');
-    return;
-  }
-  
-  isInitialized = true;
-  const totale = document.querySelectorAll('.property-card').length;
-  console.log(`✅ Caricati ${totale} immobili`);
-  
-  // *** COMUNICAZIONE INIZIALE RIMOSSA ***
-  // Non invia più messaggi automatici al caricamento
-  // La comunicazione avviene solo su richiesta del parent
-});
-
-// Gestione errori immagini (questa rimane invariata)
-document.addEventListener('error', function(e) {
-  if (e.target.tagName === 'IMG') {
-    e.target.src = 'https://via.placeholder.com/400x250/6E5C4F/ffffff?text=Immagine+non+disponibile';
-  }
-}, true);
-</script>
-
+    // Gestione errori globali
+    window.addEventListener('error', function(e) {
+      console.error('❌ Errore JavaScript:', e.error);
+    });
+  </script>
 </body>
 </html>
