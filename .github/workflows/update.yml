@@ -1,9 +1,14 @@
-name: Aggiornamento Annunci
+name: 🔄 Aggiornamento Automatico Annunci
 
 on:
   schedule:
-    - cron: '0 4 * * *'  # Ogni giorno alle 04:00 UTC (~6:00 CEST)
+    # Cambiato da 4:00 a 6:00 AM UTC come richiesto (7:00/8:00 ora locale)
+    - cron: '0 6 * * *'  # Ogni giorno alle 06:00 UTC
   workflow_dispatch:      # Avvio manuale da GitHub
+  
+  # Opzionale: esegue anche su push per test (rimuovi se non vuoi)
+  push:
+    branches: [ main, master ]
 
 permissions:
   contents: write         # Permette il push su GitHub
@@ -13,13 +18,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🧾 Checkout del codice
-        uses: actions/checkout@v3
+      - name: 📥 Checkout del codice
+        uses: actions/checkout@v4  # Aggiornato da v3 a v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@v3
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4  # Aggiornato da v3 a v4
         with:
           node-version: '18'
+          cache: 'npm'  # Aggiunto cache per velocizzare
 
       - name: 📦 Installa le dipendenze
         run: npm install
@@ -27,16 +35,45 @@ jobs:
       - name: 🏗️ Genera index.html dal feed XML
         run: node build140425.js
 
-      - name: 🔁 Commit e push solo se index.html è cambiato
+      - name: 📊 Verifica modifiche
+        id: verify_diff
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
           git add index.html
-          
           if git diff --cached --quiet; then
-            echo "🟢 Nessuna modifica da pushare."
+            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "📌 Nessuna modifica rilevata"
           else
-            git commit -m "🔄 Aggiornamento automatico index.html"
-            git push
-            echo "✅ Push completato con successo!"
+            echo "changes=true" >> $GITHUB_OUTPUT
+            echo "✅ Modifiche rilevate"
+          fi
+
+      - name: 📝 Commit e push solo se ci sono modifiche
+        if: steps.verify_diff.outputs.changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "🔄 Aggiornamento automatico immobili - $(date +'%Y-%m-%d %H:%M')"
+          git push
+          echo "✅ Push completato con successo!"
+
+      - name: 🎯 Trigger Netlify Deploy
+        if: steps.verify_diff.outputs.changes == 'true'
+        run: |
+          echo "✨ Modifiche pushate su GitHub"
+          echo "🚀 Netlify rileverà automaticamente le modifiche e farà il deploy"
+
+      - name: 📈 Summary dell'esecuzione
+        run: |
+          echo "## 📊 Riepilogo Aggiornamento Immobili" >> $GITHUB_STEP_SUMMARY
+          echo "- **Data/Ora**: $(date +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "- **Repository**: ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.verify_diff.outputs.changes }}" == "true" ]; then
+            echo "- **Stato**: ✅ Aggiornamento completato con successo" >> $GITHUB_STEP_SUMMARY
+            echo "- **Modifiche**: 🔄 Nuovi dati rilevati e pubblicati" >> $GITHUB_STEP_SUMMARY
+            echo "- **Deploy**: 🚀 Netlify aggiornerà automaticamente il sito" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **Stato**: 📌 Nessun aggiornamento necessario" >> $GITHUB_STEP_SUMMARY
+            echo "- **Modifiche**: ⚡ Dati già aggiornati" >> $GITHUB_STEP_SUMMARY
           fi
